@@ -405,7 +405,7 @@ void InicializaJuego(fsm_t* this) {
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 
-	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, 1000);
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT);
 	
 	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
@@ -586,7 +586,7 @@ void ActualizarJuego (fsm_t* this) {
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
 	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
 	
-	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, 1000);
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT);
 	
 }
 

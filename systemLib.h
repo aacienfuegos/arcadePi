@@ -18,6 +18,7 @@
 
 #define __SIN_PSEUDOWIRINGPI__
 #define CLK_MS 					1
+#define TIMEOUT					1000
 
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
