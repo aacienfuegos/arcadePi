@@ -48,12 +48,15 @@ typedef struct
 	int y;
 } tipo_pelota;
 
+
 typedef struct
 {
 	tipo_pantalla *p_pantalla; // Esta es nuestra pantalla de juego (matriz 10x7 de labo)
 	tipo_pantalla ladrillos;
 	tipo_pala pala;
 	tipo_pelota pelota;
+	tmr_t* tmr_actualizacion_juego_isr;
+	
 } tipo_arkanoPi;
 
 //------------------------------------------------------------------------

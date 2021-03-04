@@ -392,6 +392,8 @@ int CompruebaFinalJuego(fsm_t* this) {
 void InicializaJuego(fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	
+	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
 
 	// A completar por el alumno
 	// ...
@@ -403,11 +405,8 @@ void InicializaJuego(fsm_t* this) {
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, 1000);
 	
-	/*InicializaLadrillos((tipo_pantalla*)(&(p_arkanoPi->ladrillos)));*/
-	/*InicializaPelota((tipo_pelota*)(&(p_arkanoPi->pelota)));*/
-	/*InicializaPala((tipo_pala*)(&(p_arkanoPi->pala)));*/
-
 	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	
@@ -586,6 +585,8 @@ void ActualizarJuego (fsm_t* this) {
 	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
 	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, 1000);
 	
 }
 

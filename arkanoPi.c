@@ -156,8 +156,6 @@ int main () {
 	// A completar por el alumno...
 	// ...
 	
-	/*tmr_t* tmr = tmr_new();*/
-
 	next = millis();
 	while (1) {
 		fsm_fire (arkanoPi_fsm);
