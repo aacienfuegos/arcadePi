@@ -83,7 +83,8 @@ void InicializaPelota(tipo_pelota *p_pelota) {
 	// Trayectoria inicial
 	//p_pelota->trayectoria.xv = 0;
 	//p_pelota->trayectoria.yv = 1;
-	CambiarDireccionPelota(p_pelota, rand() % p_pelota->num_posibles_trayectorias);
+	/*CambiarDireccionPelota(p_pelota, rand() % p_pelota->num_posibles_trayectorias);*/
+	CambiarDireccionPelota(p_pelota, ABAJO);
 }
 
 void InicializaPala(tipo_pala *p_pala) {
@@ -485,9 +486,6 @@ void ActualizarJuego (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	// A completar por el alumno
-	// ...
-	
 	// Reseteamos flags
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_TIMER_JUEGO);
@@ -504,7 +502,13 @@ void ActualizarJuego (fsm_t* this) {
 
 	}	
 
-	if(CompruebaReboteLadrillo(p_arkanoPi)) {
+	if(CompruebaFallo(*p_arkanoPi)){
+		piLock(KEYBOARD_KEY);
+		flags |= FLAG_FIN_JUEGO;
+		piUnlock(KEYBOARD_KEY);
+		return;
+	}
+	else if(CompruebaReboteLadrillo(p_arkanoPi)) {
 		switch (dir)
 		{
 		case ARRIBA_IZQUIERDA:
@@ -563,9 +567,6 @@ void ActualizarJuego (fsm_t* this) {
 		}
 
 	}
-	else if(CompruebaFallo(*p_arkanoPi)){
-		// Que hacemos cuando se cae la pelota
-	}
 	
 	CambiarDireccionPelota(&(p_arkanoPi->pelota), dir);
 	ActualizaPosicionPelota(&p_arkanoPi->pelota);
@@ -591,6 +592,14 @@ void FinalJuego (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_FIN_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock(STD_IO_BUFFER_KEY);
+	printf("FINAL DEL JUEGO");
+	piUnlock(STD_IO_BUFFER_KEY);
+	
 
 	//pseudoWiringPiEnableDisplay(0);
 }
@@ -603,6 +612,7 @@ void ReseteaJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
+	
 	// A completar por el alumno
 	// ...
 }
