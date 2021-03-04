@@ -55,7 +55,7 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 	// A completar por el alumno...
 	// ...
-
+	
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
 
@@ -83,13 +83,31 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				// A completar por el alumno...
-				// ...
+				//completado
+				case 'a': 
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_MOV_IZQUIERDA;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'd':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_MOV_DERECHA;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'c':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_TIMER_JUEGO;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
 				case 's':
 					// A completar por el alumno...
 					// ...
-					printf("Tecla S pulsada!\n");
-					fflush(stdout);
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_BOTON;
+					piUnlock(KEYBOARD_KEY);
 					break;
 
 				case 'q':
@@ -131,6 +149,7 @@ int main () {
 
 	// Configuracion e incializacion del sistema
 	ConfiguraInicializaSistema (&sistema);
+	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
 
 	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
 

@@ -71,12 +71,12 @@ void InicializaLadrillos(tipo_pantalla *p_ladrillos) {
 
 void InicializaPelota(tipo_pelota *p_pelota) {
 	// Aleatorizamos la posicion inicial de la pelota
-	p_pelota->x = rand() % NUM_COLUMNAS_DISPLAY;
-	p_pelota->y = 2 + rand() % (NUM_FILAS_DISPLAY-2); // 2 evita que aparezca encima de ladrillos y para que no empiece demasiado pegada al suelo de la pantalla
+	/*p_pelota->x = rand() % NUM_COLUMNAS_DISPLAY;*/
+	/*p_pelota->y = 2 + rand() % (NUM_FILAS_DISPLAY-2); // 2 evita que aparezca encima de ladrillos y para que no empiece demasiado pegada al suelo de la pantalla*/
 
 	// Pelota inicialmente en el centro de la pantalla
-	//p_pelota->x = NUM_COLUMNAS_DISPLAY/2 - 1;
-	//p_pelota->y = NUM_FILAS_DISPLAY/2 -1 ;
+	p_pelota->x = NUM_COLUMNAS_DISPLAY/2 - 1;
+	p_pelota->y = NUM_FILAS_DISPLAY/2 -1 ;
 
 	InicializaPosiblesTrayectorias(p_pelota);
 
@@ -97,23 +97,23 @@ void InicializaPala(tipo_pala *p_pala) {
 void InicializaPosiblesTrayectorias(tipo_pelota *p_pelota) {
 	p_pelota->num_posibles_trayectorias = 0;
 	p_pelota->posibles_trayectorias[ARRIBA_IZQUIERDA].xv = -1;
-	p_pelota->posibles_trayectorias[ARRIBA_IZQUIERDA].yv = 1;
+	p_pelota->posibles_trayectorias[ARRIBA_IZQUIERDA].yv = -1;
 	p_pelota->num_posibles_trayectorias++;
 	p_pelota->posibles_trayectorias[ARRIBA].xv = 0;
-	p_pelota->posibles_trayectorias[ARRIBA].yv = 1;
+	p_pelota->posibles_trayectorias[ARRIBA].yv = -1;
 	p_pelota->num_posibles_trayectorias++;
 	p_pelota->posibles_trayectorias[ARRIBA_DERECHA].xv = 1;
-	p_pelota->posibles_trayectorias[ARRIBA_DERECHA].yv = 1;
+	p_pelota->posibles_trayectorias[ARRIBA_DERECHA].yv = -1;
 	p_pelota->num_posibles_trayectorias++;
 
 	p_pelota->posibles_trayectorias[ABAJO_DERECHA].xv = 1;
-	p_pelota->posibles_trayectorias[ABAJO_DERECHA].yv = -1;
+	p_pelota->posibles_trayectorias[ABAJO_DERECHA].yv = 1;
 	p_pelota->num_posibles_trayectorias++;
 	p_pelota->posibles_trayectorias[ABAJO].xv = 0;
-	p_pelota->posibles_trayectorias[ABAJO].yv = -1;
+	p_pelota->posibles_trayectorias[ABAJO].yv = 1;
 	p_pelota->num_posibles_trayectorias++;
 	p_pelota->posibles_trayectorias[ABAJO_IZQUIERDA].xv = -1;
-	p_pelota->posibles_trayectorias[ABAJO_IZQUIERDA].yv = -1;
+	p_pelota->posibles_trayectorias[ABAJO_IZQUIERDA].yv = 1;
 	p_pelota->num_posibles_trayectorias++;
 
 	//p_pelota->posibles_trayectorias[IZQUIERDA].xv = -1;
@@ -325,6 +325,9 @@ int CompruebaBotonPulsado (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -334,6 +337,9 @@ int CompruebaMovimientoIzquierda(fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_MOV_IZQUIERDA);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -343,6 +349,9 @@ int CompruebaMovimientoDerecha(fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_MOV_DERECHA);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -352,6 +361,9 @@ int CompruebaTimeoutActualizacionJuego (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -361,6 +373,9 @@ int CompruebaFinalJuego(fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_FIN_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }
@@ -380,6 +395,23 @@ void InicializaJuego(fsm_t* this) {
 	// A completar por el alumno
 	// ...
 
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock (STD_IO_BUFFER_KEY);
+	InicializaArkanoPi(p_arkanoPi);
+	
+	/*InicializaLadrillos((tipo_pantalla*)(&(p_arkanoPi->ladrillos)));*/
+	/*InicializaPelota((tipo_pelota*)(&(p_arkanoPi->pelota)));*/
+	/*InicializaPala((tipo_pala*)(&(p_arkanoPi->pala)));*/
+
+	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+	
+	piUnlock (STD_IO_BUFFER_KEY);
+
+
 	//pseudoWiringPiEnableDisplay(1);
 }
 
@@ -397,6 +429,21 @@ void MuevePalaIzquierda (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_MOV_IZQUIERDA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	ActualizaPosicionPala(&(p_arkanoPi->pala), IZQUIERDA);
+	fflush(stdout); 
+	
+	piLock(MATRIX_KEY); // CLAVE PANTALLA
+	ActualizaPantalla(p_arkanoPi);
+	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
+	
+	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
+	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	
 }
 
 // void MuevePalaDerecha (void): función similar a la anterior
@@ -408,6 +455,19 @@ void MuevePalaDerecha (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_MOV_DERECHA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	ActualizaPosicionPala(&(p_arkanoPi->pala), DERECHA);
+	
+	piLock(MATRIX_KEY); // CLAVE PANTALLA
+	ActualizaPantalla(p_arkanoPi);
+	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
+	
+	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
+	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
 }
 
 // void ActualizarJuego (void): función encargada de actualizar la
@@ -427,6 +487,99 @@ void ActualizarJuego (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
+	
+	// Reseteamos flags
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	tipo_pelota pelota;
+	pelota = (p_arkanoPi->pelota);
+	
+	int dir;
+	for(dir=ARRIBA_IZQUIERDA; dir<=ABAJO_IZQUIERDA; dir++){
+		if(pelota.trayectoria.xv == pelota.posibles_trayectorias[dir].xv && pelota.trayectoria.yv == pelota.posibles_trayectorias[dir].yv){
+			break;
+		}
+
+	}	
+
+	if(CompruebaReboteLadrillo(p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+		case ARRIBA:
+		case ARRIBA_DERECHA:
+			dir += 3;
+			break;
+		default:
+			break;
+		}
+
+	} 
+	else if(CompruebaReboteParedesVerticales(*p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+		case ABAJO_DERECHA:
+			dir += 2;
+			break;
+		case ARRIBA_DERECHA:
+		case ABAJO_IZQUIERDA:
+			dir -= 2;
+		default:
+			break;
+		}
+
+	}
+	else if(CompruebaReboteTecho(*p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+		case ARRIBA:
+		case ARRIBA_DERECHA:
+			dir += 3;
+			break;
+		default:
+			break;
+		}
+
+	}
+	else if(CompruebaRebotePala(*p_arkanoPi)){
+		int aux = p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x;
+		switch(aux)
+		{
+		case 0:
+			dir = ARRIBA_IZQUIERDA;
+			break;
+		case 1:
+			dir = ARRIBA;
+			break;
+		case 2:
+			dir = ARRIBA_DERECHA;
+			break;
+		default:
+			break;
+		}
+
+	}
+	else if(CompruebaFallo(*p_arkanoPi)){
+		// Que hacemos cuando se cae la pelota
+	}
+	
+	CambiarDireccionPelota(&(p_arkanoPi->pelota), dir);
+	ActualizaPosicionPelota(&p_arkanoPi->pelota);
+
+
+	// Actualizamos pantallas
+	piLock(MATRIX_KEY); // CLAVE PANTALLA
+	ActualizaPantalla(p_arkanoPi);
+	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
+	
+	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
+	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	
 }
 
 // void FinalJuego (void): función encargada de mostrar en la ventana de

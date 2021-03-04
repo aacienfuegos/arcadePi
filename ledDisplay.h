@@ -2,7 +2,7 @@
 #define _LEDDISPLAY_H_
 
 //#include <wiringPi.h>
-#include "pseudoWiringPi.h"
+#include "wiringPi.h"
 #include "systemLib.h"
 #include "tmr.h"
 

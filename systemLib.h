@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 //s#include <wiringPi.h>
-#include "pseudoWiringPi.h"
+#include "wiringPi.h"
 
 #include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 #include "fsm.h"
@@ -31,9 +31,9 @@
 // CLAVES PARA MUTEX
 // ATENCION: Valores a modificar por el alumno
 #define	KEYBOARD_KEY		0
-#define	SYSTEM_FLAGS_KEY	0
-#define	MATRIX_KEY			0
-#define	STD_IO_BUFFER_KEY	0
+#define	SYSTEM_FLAGS_KEY	1
+#define	MATRIX_KEY			2
+#define	STD_IO_BUFFER_KEY	3
 
 // Distribucion de pines GPIO empleada para el teclado y el display
 // ATENCION: Valores a modificar por el alumno
@@ -60,13 +60,13 @@
 
 // FLAGS FSM CONTROL DE SERPIENTE Y GESTION JUEGO
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_MOV_ARRIBA 	0x00
-#define FLAG_MOV_ABAJO		0x00
-#define FLAG_MOV_DERECHA 	0x00
-#define FLAG_MOV_IZQUIERDA 	0x00
-#define FLAG_TIMER_JUEGO	0x00
-#define FLAG_BOTON 			0x00
-#define FLAG_FIN_JUEGO		0x00
+#define FLAG_MOV_ARRIBA 	0x01
+#define FLAG_MOV_ABAJO		0x02
+#define FLAG_MOV_DERECHA 	0x04
+#define FLAG_MOV_IZQUIERDA 	0x08
+#define FLAG_TIMER_JUEGO	0x10
+#define FLAG_BOTON 			0x20
+#define FLAG_FIN_JUEGO		0x40
 
 enum fsm_state {
 	WAIT_START,

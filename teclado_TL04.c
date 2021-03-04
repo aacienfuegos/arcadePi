@@ -62,7 +62,6 @@ int CompruebaTeclaPulsada (fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
-
 	return result;
 }
 
