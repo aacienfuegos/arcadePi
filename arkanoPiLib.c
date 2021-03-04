@@ -402,6 +402,7 @@ void InicializaJuego(fsm_t* this) {
 
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
+
 	
 	/*InicializaLadrillos((tipo_pantalla*)(&(p_arkanoPi->ladrillos)));*/
 	/*InicializaPelota((tipo_pelota*)(&(p_arkanoPi->pelota)));*/
@@ -501,53 +502,44 @@ void ActualizarJuego (fsm_t* this) {
 		}
 
 	}	
+	
+	if(CompruebaReboteParedesVerticales(*p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+			dir = ARRIBA_DERECHA;
+			break;
+		case ABAJO_DERECHA:
+			dir = ABAJO_IZQUIERDA;
+			break;
+		case ARRIBA_DERECHA:
+			dir = ARRIBA_IZQUIERDA;
+			break;
+		case ABAJO_IZQUIERDA:
+			dir = ABAJO_DERECHA;
+			break;
+		default:
+			break;
+		}
+	}
+	if(CompruebaReboteTecho(*p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+		case ARRIBA:
+		case ARRIBA_DERECHA:
+			dir += 3;
+			break;
+		default:
+			break;
+		}
 
+	}
 	if(CompruebaFallo(*p_arkanoPi)){
 		piLock(KEYBOARD_KEY);
 		flags |= FLAG_FIN_JUEGO;
 		piUnlock(KEYBOARD_KEY);
 		return;
-	}
-	else if(CompruebaReboteLadrillo(p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-		case ARRIBA:
-		case ARRIBA_DERECHA:
-			dir += 3;
-			break;
-		default:
-			break;
-		}
-
-	} 
-	else if(CompruebaReboteParedesVerticales(*p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-		case ABAJO_DERECHA:
-			dir += 2;
-			break;
-		case ARRIBA_DERECHA:
-		case ABAJO_IZQUIERDA:
-			dir -= 2;
-		default:
-			break;
-		}
-
-	}
-	else if(CompruebaReboteTecho(*p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-		case ARRIBA:
-		case ARRIBA_DERECHA:
-			dir += 3;
-			break;
-		default:
-			break;
-		}
-
 	}
 	else if(CompruebaRebotePala(*p_arkanoPi)){
 		int aux = p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x;
@@ -565,8 +557,22 @@ void ActualizarJuego (fsm_t* this) {
 		default:
 			break;
 		}
-
 	}
+
+	if(CompruebaReboteLadrillo(p_arkanoPi)) {
+		switch (dir)
+		{
+		case ARRIBA_IZQUIERDA:
+		case ARRIBA:
+		case ARRIBA_DERECHA:
+			dir += 3;
+			break;
+		default:
+			break;
+		}
+
+	} 
+	
 	
 	CambiarDireccionPelota(&(p_arkanoPi->pelota), dir);
 	ActualizaPosicionPelota(&p_arkanoPi->pelota);
@@ -596,10 +602,15 @@ void FinalJuego (fsm_t* this) {
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
-	piLock(STD_IO_BUFFER_KEY);
-	printf("FINAL DEL JUEGO");
-	piUnlock(STD_IO_BUFFER_KEY);
-	
+	if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))==0){
+		piLock(STD_IO_BUFFER_KEY);
+		printf("FIN DEL JUEGO: HAS GANADO");
+		piUnlock(STD_IO_BUFFER_KEY);
+	} else {
+		piLock(STD_IO_BUFFER_KEY);
+		printf("FIN DEL JUEGO: HAS PERDIDO");
+		piUnlock(STD_IO_BUFFER_KEY);
+	}
 
 	//pseudoWiringPiEnableDisplay(0);
 }
@@ -612,6 +623,14 @@ void ReseteaJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock (STD_IO_BUFFER_KEY);
+	ResetArkanoPi(p_arkanoPi);
+	
+	piUnlock (STD_IO_BUFFER_KEY);
 	
 	// A completar por el alumno
 	// ...
@@ -624,6 +643,10 @@ void ReseteaJuego (fsm_t* this) {
 void tmr_actualizacion_juego_isr(union sigval value) {
 	// A completar por el alumno
 	// ...
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags |= FLAG_TIMER_JUEGO;
+	piUnlock(SYSTEM_FLAGS_KEY);
 }
 
 
