@@ -9,14 +9,14 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/time.h>
-//s#include <wiringPi.h>
+#include <wiringPi.h>
 #include "wiringPi.h"
 
 #include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 #include "fsm.h"
 #include "tmr.h"
 
-#define __SIN_PSEUDOWIRINGPI__
+#define __SIN_wiringPi__
 #define CLK_MS 					1
 
 // ATENCION: Valores a modificar por el alumno
@@ -38,13 +38,13 @@
 // Distribucion de pines GPIO empleada para el teclado y el display
 // ATENCION: Valores a modificar por el alumno
 #define GPIO_KEYBOARD_COL_1 	0
-#define GPIO_KEYBOARD_COL_2 	0
-#define GPIO_KEYBOARD_COL_3 	0
-#define GPIO_KEYBOARD_COL_4 	0
-#define GPIO_KEYBOARD_ROW_1 	0
-#define GPIO_KEYBOARD_ROW_2 	0
-#define GPIO_KEYBOARD_ROW_3 	0
-#define GPIO_KEYBOARD_ROW_4 	0
+#define GPIO_KEYBOARD_COL_2 	1
+#define GPIO_KEYBOARD_COL_3 	2
+#define GPIO_KEYBOARD_COL_4 	3
+#define GPIO_KEYBOARD_ROW_1 	5
+#define GPIO_KEYBOARD_ROW_2 	6
+#define GPIO_KEYBOARD_ROW_3 	12
+#define GPIO_KEYBOARD_ROW_4 	13
 
 #define GPIO_LED_DISPLAY_COL_1	0
 #define GPIO_LED_DISPLAY_COL_2	0

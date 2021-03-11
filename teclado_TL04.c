@@ -26,6 +26,8 @@ fsm_trans_t fsm_trans_deteccion_pulsaciones[] = {
 void InicializaTeclado(TipoTeclado *p_teclado) {
 	// A completar por el alumno...
 	// ...
+	p_teclado->tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
+	tmr_startms((tmr_t*)(p_teclado->tmr_duracion_columna),TIMEOUT_COLUMNA_TECLADO);
 }
 
 //------------------------------------------------------
@@ -51,6 +53,9 @@ int CompruebaTimeoutColumna (fsm_t* this) {
 
 	// A completar por el alumno...
 	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_TIMEOUT_COLUMNA_TECLADO);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
 }

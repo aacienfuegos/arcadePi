@@ -1,8 +1,8 @@
 #include "arkanoPiLib.h"
 
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
-	{1,1,1,1,1,1,1,1},
-	{1,1,1,1,1,1,1,1},
+	{0,0,0,1,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
@@ -27,7 +27,7 @@ void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pa
 }
 
 void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
-#ifdef __SIN_PSEUDOWIRINGPI__
+#ifdef __SIN_wiringPi__
 	int i=0, j=0;
 
 	printf("\n[PANTALLA]\n");
@@ -413,7 +413,7 @@ void InicializaJuego(fsm_t* this) {
 	piUnlock (STD_IO_BUFFER_KEY);
 
 
-	//pseudoWiringPiEnableDisplay(1);
+	/*WiringPiEnableDisplay(1);*/
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -486,109 +486,68 @@ void ActualizarJuego (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	// Reseteamos flags
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_TIMER_JUEGO);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock (SYSTEM_FLAGS_KEY);
+	flags &= (~ FLAG_TIMER_JUEGO);
+	piUnlock (SYSTEM_FLAGS_KEY);
 
-	tipo_pelota pelota;
-	pelota = (p_arkanoPi->pelota);
-	
-	int dir;
-	for(dir=ARRIBA_IZQUIERDA; dir<=ABAJO_IZQUIERDA; dir++){
-		if(pelota.trayectoria.xv == pelota.posibles_trayectorias[dir].xv && pelota.trayectoria.yv == pelota.posibles_trayectorias[dir].yv){
-			break;
-		}
-
-	}	
-	
 	if(CompruebaReboteParedesVerticales(*p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-			dir = ARRIBA_DERECHA;
-			break;
-		case ABAJO_DERECHA:
-			dir = ABAJO_IZQUIERDA;
-			break;
-		case ARRIBA_DERECHA:
-			dir = ARRIBA_IZQUIERDA;
-			break;
-		case ABAJO_IZQUIERDA:
-			dir = ABAJO_DERECHA;
-			break;
-		default:
-			break;
-		}
+		p_arkanoPi->pelota.trayectoria.xv = -p_arkanoPi->pelota.trayectoria.xv;
 	}
+
 	if(CompruebaReboteTecho(*p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-		case ARRIBA:
-		case ARRIBA_DERECHA:
-			dir += 3;
-			break;
-		default:
-			break;
-		}
-
+		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
 	}
-	if(CompruebaFallo(*p_arkanoPi)){
-		piLock(KEYBOARD_KEY);
+
+	if(CompruebaFallo (*p_arkanoPi)) {
+		piLock (SYSTEM_FLAGS_KEY);
 		flags |= FLAG_FIN_JUEGO;
-		piUnlock(KEYBOARD_KEY);
+		piUnlock (SYSTEM_FLAGS_KEY);
 		return;
-	}
-	else if(CompruebaRebotePala(*p_arkanoPi)){
-		int aux = p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x;
-		switch(aux)
-		{
+
+	} else if (CompruebaRebotePala (*p_arkanoPi)) {
+		switch(p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x) {
+
 		case 0:
-			dir = ARRIBA_IZQUIERDA;
-			break;
+		CambiarDireccionPelota(&(p_arkanoPi->pelota),ARRIBA_IZQUIERDA);
+		break;
+
 		case 1:
-			dir = ARRIBA;
-			break;
+		CambiarDireccionPelota(&(p_arkanoPi->pelota), ARRIBA);
+		break;
+
 		case 2:
-			dir = ARRIBA_DERECHA;
-			break;
-		default:
-			break;
+		CambiarDireccionPelota(&(p_arkanoPi->pelota), ARRIBA_DERECHA);
+		break;
+
 		}
 	}
+	if (CompruebaReboteLadrillo(p_arkanoPi)) {
+		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
 
-	if(CompruebaReboteLadrillo(p_arkanoPi)) {
-		switch (dir)
-		{
-		case ARRIBA_IZQUIERDA:
-		case ARRIBA:
-		case ARRIBA_DERECHA:
-			dir += 3;
-			break;
-		default:
-			break;
-		}
+		if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla)<= 0) {
+			piLock (SYSTEM_FLAGS_KEY);
+			flags |= FLAG_FIN_JUEGO;
+			piUnlock (SYSTEM_FLAGS_KEY);
+			return;
+	}
+	}
 
-	} 
-	
-	
-	CambiarDireccionPelota(&(p_arkanoPi->pelota), dir);
-	ActualizaPosicionPelota(&p_arkanoPi->pelota);
+	ActualizaPosicionPelota (&(p_arkanoPi->pelota));
 
+	piLock(MATRIX_KEY);
+	ActualizaPantalla (p_arkanoPi);
+	piUnlock(MATRIX_KEY);
 
-	// Actualizamos pantallas
-	piLock(MATRIX_KEY); // CLAVE PANTALLA
-	ActualizaPantalla(p_arkanoPi);
-	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
-	
-	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
-	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
-	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
+	piLock (STD_IO_BUFFER_KEY);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+	piUnlock (STD_IO_BUFFER_KEY);
 	
 	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
-	
+
 }
+
+
+
 
 // void FinalJuego (void): función encargada de mostrar en la ventana de
 // terminal los mensajes necesarios para informar acerca del resultado del juego.
@@ -602,6 +561,8 @@ void FinalJuego (fsm_t* this) {
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
+	
+	tmr_destroy(p_arkanoPi->tmr_actualizacion_juego_isr);
 
 	if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))==0){
 		piLock(STD_IO_BUFFER_KEY);
@@ -613,7 +574,7 @@ void FinalJuego (fsm_t* this) {
 		piUnlock(STD_IO_BUFFER_KEY);
 	}
 
-	//pseudoWiringPiEnableDisplay(0);
+	/*WiringPiEnableDisplay(0);*/
 }
 
 //void ReseteaJuego (void): función encargada de llevar a cabo la

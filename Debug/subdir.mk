@@ -9,7 +9,7 @@ C_SRCS += \
 ../fsm.c \
 ../kbhit.c \
 ../ledDisplay.c \
-../pseudoWiringPi.c \
+../wiringPi.c \
 ../teclado_TL04.c \
 ../tmr.c 
 
@@ -19,7 +19,7 @@ OBJS += \
 ./fsm.o \
 ./kbhit.o \
 ./ledDisplay.o \
-./pseudoWiringPi.o \
+./wiringPi.o \
 ./teclado_TL04.o \
 ./tmr.o 
 
@@ -29,7 +29,7 @@ C_DEPS += \
 ./fsm.d \
 ./kbhit.d \
 ./ledDisplay.d \
-./pseudoWiringPi.d \
+./wiringPi.d \
 ./teclado_TL04.d \
 ./tmr.d 
 

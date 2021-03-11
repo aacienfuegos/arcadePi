@@ -1,7 +1,7 @@
-pseudoWiringPi.o: ../pseudoWiringPi.c ../pseudoWiringPi.h ../systemLib.h \
+wiringPi.o: ../wiringPi.c ../wiringPi.h ../systemLib.h \
  ../kbhit.h ../fsm.h ../tmr.h
 
-../pseudoWiringPi.h:
+../wiringPi.h:
 
 ../systemLib.h:
 

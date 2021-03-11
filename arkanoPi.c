@@ -165,6 +165,8 @@ int main () {
 
 		next += CLK_MS;
 		delay_until (next);
+
+		//fsm_destroy (interruptor_tmr_fsm);
 	}
 
 	fsm_destroy (arkanoPi_fsm);
