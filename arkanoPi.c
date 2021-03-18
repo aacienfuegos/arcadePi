@@ -7,21 +7,32 @@ TipoSistema sistema;
 
 // Declaracion del objeto teclado
 TipoTeclado teclado = {
+	// Completado
 	.columnas = {
-		// A completar por el alumno...
-		// ...
+		GPIO_KEYBOARD_COL_1,
+		GPIO_KEYBOARD_COL_2,
+		GPIO_KEYBOARD_COL_3,
+		GPIO_KEYBOARD_COL_4
+		
 	},
 	.filas = {
-		// A completar por el alumno...
-		// ...
+		GPIO_KEYBOARD_ROW_1,
+		GPIO_KEYBOARD_ROW_2,
+		GPIO_KEYBOARD_ROW_3,
+		GPIO_KEYBOARD_ROW_4
 	},
 	.rutinas_ISR = {
-		// A completar por el alumno...
-		// ...
+		teclado_fila_1_isr,	
+		teclado_fila_2_isr,	
+		teclado_fila_3_isr,	
+		teclado_fila_4_isr	
 	},
 
-	// A completar por el alumno...
-	// ...
+	// Completado
+	.columna_actual = COLUMNA_1,
+
+	.teclaPulsada.col = -1,
+	.teclaPulsada.row = -1,
 };
 
 // Declaracion del objeto display
@@ -53,8 +64,8 @@ TipoLedDisplay led_display = {
 // como el thread de exploración del teclado del PC
 int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	// A completar por el alumno...
-	// ...
+	// Compeltado
+	InicializaTeclado(&teclado);
 	
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
@@ -153,15 +164,19 @@ int main () {
 
 	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
 
-	// A completar por el alumno...
-	// ...
+	// Completado
+	
+	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
+	fsm_t* tecla_fsm = fsm_new (TECLADO_ESPERA_TECLA, fsm_trans_deteccion_pulsaciones, &(teclado));
+
 	
 	next = millis();
 	while (1) {
 		fsm_fire (arkanoPi_fsm);
 
-		// A completar por el alumno...
-		// ...
+		fsm_fire (teclado_fsm);
+		fsm_fire (tecla_fsm);
+		// Completado
 
 		next += CLK_MS;
 		delay_until (next);
@@ -169,5 +184,8 @@ int main () {
 		//fsm_destroy (interruptor_tmr_fsm);
 	}
 	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
+	tmr_destroy((tmr_t*)(timer_duracion_columna_isr));
 	fsm_destroy (arkanoPi_fsm);
+	fsm_destroy (teclado_fsm);
+	fsm_destroy (tecla_fsm);
 }

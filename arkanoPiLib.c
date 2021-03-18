@@ -150,7 +150,7 @@ void PintaPala(tipo_pala *p_pala, tipo_pantalla *p_pantalla) {
 void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla) {
 	if( (p_pelota->x >= 0) && (p_pelota->x < NUM_COLUMNAS_DISPLAY) ) {
 		if( (p_pelota->y >= 0) && (p_pelota->y < NUM_FILAS_DISPLAY) ) {
-			p_pantalla->matriz[p_pelota->y][p_pelota->x] = 8;
+			p_pantalla->matriz[p_pelota->y][p_pelota->x] = 7;
 		}
 		else {
 			printf("\n\nPROBLEMAS!!!! posicion y=%d de la pelota INVALIDA!!!\n\n", p_pelota->y);
