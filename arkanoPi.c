@@ -168,6 +168,6 @@ int main () {
 
 		//fsm_destroy (interruptor_tmr_fsm);
 	}
-
+	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
 	fsm_destroy (arkanoPi_fsm);
 }

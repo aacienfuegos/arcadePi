@@ -524,7 +524,7 @@ void ActualizarJuego (fsm_t* this) {
 	if (CompruebaReboteLadrillo(p_arkanoPi)) {
 		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
 
-		if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla)<= 0) {
+		if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))<= 0) {
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_FIN_JUEGO;
 			piUnlock (SYSTEM_FLAGS_KEY);
@@ -562,15 +562,14 @@ void FinalJuego (fsm_t* this) {
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 	
-	tmr_destroy(p_arkanoPi->tmr_actualizacion_juego_isr);
 
 	if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))==0){
 		piLock(STD_IO_BUFFER_KEY);
-		printf("FIN DEL JUEGO: HAS GANADO");
+		printf("FIN DEL JUEGO: HAS GANADO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
 	} else {
 		piLock(STD_IO_BUFFER_KEY);
-		printf("FIN DEL JUEGO: HAS PERDIDO");
+		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
 	}
 
