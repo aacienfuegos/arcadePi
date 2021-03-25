@@ -65,10 +65,11 @@ TipoLedDisplay led_display = {
 int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 	// Compeltado
+	wiringPiSetupGpio();
 	InicializaTeclado(&teclado);
 	
 	// Lanzamos thread para exploracion del teclado convencional del PC
-	result = piThreadCreate (thread_explora_teclado_PC);
+	//result = piThreadCreate (thread_explora_teclado_PC);
 
 	if (result != 0) {
 		printf ("Thread didn't start!!!\n");
@@ -168,7 +169,7 @@ int main () {
 	
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
 	fsm_t* tecla_fsm = fsm_new (TECLADO_ESPERA_TECLA, fsm_trans_deteccion_pulsaciones, &(teclado));
-
+	teclado.tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
 	
 	next = millis();
 	while (1) {
