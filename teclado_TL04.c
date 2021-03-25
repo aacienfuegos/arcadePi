@@ -81,7 +81,7 @@ void ActualizaExcitacionTecladoGPIO (int columna) {
 	gpio[COLUMNA_3] = GPIO_KEYBOARD_COL_3;
 	gpio[COLUMNA_4] = GPIO_KEYBOARD_COL_4;
 
-	int output[4] = 0,0,0,0};
+	int output[4] = {0,0,0,0};
 
 	
 	switch(columna){
