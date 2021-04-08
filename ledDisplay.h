@@ -16,7 +16,7 @@
 
 // FLAGS FSM CONTROL DE EXCITACION DISPLAY
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_TIMEOUT_COLUMNA_DISPLAY 	0x00
+#define FLAG_TIMEOUT_COLUMNA_DISPLAY 	0x01
 
 enum estados_excitacion_display_fsm {
 	DISPLAY_ESPERA_COLUMNA
