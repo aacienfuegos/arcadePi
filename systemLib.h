@@ -46,6 +46,8 @@
 #define GPIO_KEYBOARD_ROW_3 	12
 #define GPIO_KEYBOARD_ROW_4 	13
 
+
+// cambiar gpios por los que estamos usando
 #define GPIO_LED_DISPLAY_COL_1	0
 #define GPIO_LED_DISPLAY_COL_2	0
 #define GPIO_LED_DISPLAY_COL_3	0
