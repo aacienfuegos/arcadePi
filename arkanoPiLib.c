@@ -1,13 +1,14 @@
 #include "arkanoPiLib.h"
 
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
-	{0,0,0,1,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0},
+	{1,1,1,1,1,1,1,1}, // 0xFF
+	{1,1,1,1,1,1,1,1}, // 0xFF
+	{0,0,0,0,0,0,0,0}, // 0x00
+	{0,0,0,0,0,0,0,0}, // 0x00
+	{0,0,0,0,0,0,0,0}, // 0x00
+	{0,0,0,0,0,0,0,0}, // 0x00
+	{0,0,0,0,0,0,0,0}, // 0x00
+
 };
 
 //------------------------------------------------------
@@ -27,7 +28,7 @@ void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pa
 }
 
 void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
-#ifdef __SIN_wiringPi__
+#ifdef __SIN_wiringPi__ // esto que hace?????
 	int i=0, j=0;
 
 	printf("\n[PANTALLA]\n");
