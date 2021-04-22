@@ -39,6 +39,60 @@ fsm_trans_t fsm_trans_excitacion_display[] = {
 void InicializaLedDisplay (TipoLedDisplay *led_display) {
 	// A completar por el alumno...
 	// ...
+	if (wiringPiSetupGpio() < 0) {
+	    fprintf (stderr, "Unable to setup wiringPi: %s\n", strerror (errno)) ;
+	    return;
+	}
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_1, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_1, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_2, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_2, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_3, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_3, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_4, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_4, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_5, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_4, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_6, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_6, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_ROW_7, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_ROW_7, HIGH); */
+
+	/* pinMode (GPIO_LED_DISPLAY_COL_1, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_COL_1, LOW); */
+
+	/* pinMode (GPIO_LED_DISPLAY_COL_2, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_COL_2, LOW); */
+
+	/* pinMode (GPIO_LED_DISPLAY_COL_3, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_COL_3, LOW); */
+
+	/* pinMode (GPIO_LED_DISPLAY_COL_4, OUTPUT); */
+	/* digitalWrite(GPIO_LED_DISPLAY_COL_4, LOW); */
+
+	pinMode(GPIO_LED_DISPLAY_ROW_1, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_2, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_3, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_4, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_5, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_6, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_ROW_7, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_COL_1, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_COL_2, OUTPUT);
+	pinMode(GPIO_LED_DISPLAY_COL_3, OUTPUT);
+
+	led_display->pantalla = pantalla_inicial;
+	ActualizaLedDisplay(led_display);
+
+	led_display->tmr_refresco_display = tmr_new (timer_refresco_display_isr);
+	tmr_startms((tmr_t*)(led_display->tmr_refresco_display),TIMEOUT_COLUMNA_DISPLAY);
 }
 
 //------------------------------------------------------
@@ -47,20 +101,68 @@ void InicializaLedDisplay (TipoLedDisplay *led_display) {
 
 void ApagaFilas (TipoLedDisplay *led_display){
 	// A completar por el alumno...
-	// ...
+	// ...  completado
+	digitalWrite(GPIO_LED_DISPLAY_ROW_1, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_2, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_3, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_4, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_5, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_6, HIGH);
+	digitalWrite(GPIO_LED_DISPLAY_ROW_7, HIGH);
 }
 
 void ExcitaColumnas(int columna) {
+	digitalWrite(GPIO_LED_DISPLAY_COL_1, LOW);
+	digitalWrite(GPIO_LED_DISPLAY_COL_2, LOW);
+	digitalWrite(GPIO_LED_DISPLAY_COL_3, LOW);
 
 	switch(columna) {
 		// A completar por el alumno...
 		// ...
+		case 1:
+			digitalWrite(GPIO_LED_DISPLAY_COL_1, HIGH);
+			break;
+		case 2:
+			digitalWrite(GPIO_LED_DISPLAY_COL_2, HIGH);
+			break;
+		case 3:
+			digitalWrite(GPIO_LED_DISPLAY_COL_1, HIGH);
+			digitalWrite(GPIO_LED_DISPLAY_COL_2, HIGH);
+			break;
+		case 4:
+			digitalWrite(GPIO_LED_DISPLAY_COL_3, HIGH);
+			break;
+		case 5:
+			digitalWrite(GPIO_LED_DISPLAY_COL_1, HIGH);
+			digitalWrite(GPIO_LED_DISPLAY_COL_3, HIGH);
+			break;
+		case 6:
+			digitalWrite(GPIO_LED_DISPLAY_COL_2, HIGH);
+			digitalWrite(GPIO_LED_DISPLAY_COL_3, HIGH);
+			break;
+		case 7:
+			digitalWrite(GPIO_LED_DISPLAY_COL_1, HIGH);
+			digitalWrite(GPIO_LED_DISPLAY_COL_2, HIGH);
+			digitalWrite(GPIO_LED_DISPLAY_COL_3, HIGH);
+			break;
+
 	}
 }
 
 void ActualizaLedDisplay (TipoLedDisplay *led_display) {
 	// A completar por el alumno...
 	// ...
+	ApagaFilas(led_display);
+	int i, j = 0;
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			ExcitaColumnas(j);
+			digitalWrite(led_display->filas[i], !led_display->pantalla.matriz[i][j]);
+		}
+	}
+
+	return;
 }
 
 //------------------------------------------------------
@@ -73,7 +175,10 @@ int CompruebaTimeoutColumnaDisplay (fsm_t* this) {
 	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
 	// A completar por el alumno...
-	// ...
+	// ... completado
+	piLock(MATRIX_KEY);
+	result = (p_ledDisplay->flags & FLAG_TIMEOUT_COLUMNA_DISPLAY);
+	piUnlock(MATRIX_KEY);
 
 	return result;
 }
@@ -86,8 +191,12 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 	TipoLedDisplay *p_ledDisplay;
 	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
+
 	// A completar por el alumno...
 	// ...
+	ActualizaLedDisplay(p_ledDisplay);
+
+	tmr_startms(led_display.tmr_refresco_display, TIMEOUT_COLUMNA_DISPLAY);
 }
 
 //------------------------------------------------------
@@ -97,5 +206,8 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 void timer_refresco_display_isr (union sigval value) {
 	// A completar por el alumno...
 	// ...
+	piLock(MATRIX_KEY);
+	led_display.flags |= FLAG_TIMEOUT_COLUMNA_DISPLAY;
+	piUnlock(MATRIX_KEY);
 }
 
