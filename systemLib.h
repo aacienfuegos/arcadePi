@@ -48,17 +48,17 @@
 
 
 // cambiar gpios por los que estamos usando
-#define GPIO_LED_DISPLAY_COL_1	0
-#define GPIO_LED_DISPLAY_COL_2	0
-#define GPIO_LED_DISPLAY_COL_3	0
-#define GPIO_LED_DISPLAY_COL_4	0
-#define GPIO_LED_DISPLAY_ROW_1	0
-#define GPIO_LED_DISPLAY_ROW_2	0
-#define GPIO_LED_DISPLAY_ROW_3	0
-#define GPIO_LED_DISPLAY_ROW_4	0
-#define GPIO_LED_DISPLAY_ROW_5	0
-#define GPIO_LED_DISPLAY_ROW_6	0
-#define GPIO_LED_DISPLAY_ROW_7	0
+#define GPIO_LED_DISPLAY_COL_1	11
+#define GPIO_LED_DISPLAY_COL_2	14
+#define GPIO_LED_DISPLAY_COL_3	17
+#define GPIO_LED_DISPLAY_COL_4	18 // not used
+#define GPIO_LED_DISPLAY_ROW_1	4
+#define GPIO_LED_DISPLAY_ROW_2	7
+#define GPIO_LED_DISPLAY_ROW_3	8
+#define GPIO_LED_DISPLAY_ROW_4	10
+#define GPIO_LED_DISPLAY_ROW_5	22
+#define GPIO_LED_DISPLAY_ROW_6	23
+#define GPIO_LED_DISPLAY_ROW_7	24
 
 // FLAGS FSM CONTROL DE SERPIENTE Y GESTION JUEGO
 // ATENCION: Valores a modificar por el alumno
@@ -78,3 +78,4 @@ enum fsm_state {
 extern int flags;
 
 #endif /* SYSTEMLIB_H_ */
+
