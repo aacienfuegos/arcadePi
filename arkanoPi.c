@@ -13,7 +13,7 @@ TipoTeclado teclado = {
 		GPIO_KEYBOARD_COL_2,
 		GPIO_KEYBOARD_COL_3,
 		GPIO_KEYBOARD_COL_4
-		
+
 	},
 	.filas = {
 		GPIO_KEYBOARD_ROW_1,
@@ -22,10 +22,10 @@ TipoTeclado teclado = {
 		GPIO_KEYBOARD_ROW_4
 	},
 	.rutinas_ISR = {
-		teclado_fila_1_isr,	
-		teclado_fila_2_isr,	
-		teclado_fila_3_isr,	
-		teclado_fila_4_isr	
+		teclado_fila_1_isr,
+		teclado_fila_2_isr,
+		teclado_fila_3_isr,
+		teclado_fila_4_isr
 	},
 
 	// Completado
@@ -40,10 +40,23 @@ TipoLedDisplay led_display = {
 	.pines_control_columnas = {
 		// A completar por el alumno...
 		// ...
+		GPIO_LED_DISPLAY_COL_1,
+		GPIO_LED_DISPLAY_COL_2,
+		GPIO_LED_DISPLAY_COL_3
+		/* GPIO_LED_DISPLAY_COL_4 */
+
 	},
 	.filas = {
 		// A completar por el alumno...
 		// ...
+		GPIO_LED_DISPLAY_ROW_1,
+		GPIO_LED_DISPLAY_ROW_2,
+		GPIO_LED_DISPLAY_ROW_3,
+		GPIO_LED_DISPLAY_ROW_4,
+		GPIO_LED_DISPLAY_ROW_5,
+		GPIO_LED_DISPLAY_ROW_6,
+		GPIO_LED_DISPLAY_ROW_7
+
 	},
 	// A completar por el alumno...
 	// ...
@@ -67,7 +80,8 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	// Compeltado
 	wiringPiSetupGpio();
 	InicializaTeclado(&teclado);
-	
+	InicializaLedDisplay(&led_display);
+
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
 
@@ -96,7 +110,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 
 			switch(teclaPulsada) {
 				//completado
-				case 'a': 
+				case 'a':
 					piLock(KEYBOARD_KEY);
 					flags |= FLAG_MOV_IZQUIERDA;
 					piUnlock(KEYBOARD_KEY);
@@ -166,17 +180,23 @@ int main () {
 	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
 
 	// Completado
-	
+
+	// teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
 	fsm_t* tecla_fsm = fsm_new (TECLADO_ESPERA_TECLA, fsm_trans_deteccion_pulsaciones, &(teclado));
 	teclado.tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
-	
+
+	// display
+	fsm_t* display_fsm = fsm_new (DISPLAY_ESPERA_COLUMNA, fsm_trans_excitacion_display, &(led_display));
+	led_display.tmr_refresco_display =  tmr_new (timer_refresco_display_isr);
+
 	next = millis();
 	while (1) {
 		fsm_fire (arkanoPi_fsm);
 
 		fsm_fire (teclado_fsm);
 		fsm_fire (tecla_fsm);
+		fsm_fire (display_fsm);
 		// Completado
 
 		next += CLK_MS;
@@ -189,4 +209,6 @@ int main () {
 	fsm_destroy (arkanoPi_fsm);
 	fsm_destroy (teclado_fsm);
 	fsm_destroy (tecla_fsm);
+		fsm_fire (display_fsm);
 }
+
