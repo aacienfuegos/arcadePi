@@ -2,7 +2,6 @@
 #define _LEDDISPLAY_H_
 
 #include <wiringPi.h>
-#include "wiringPi.h"
 #include "systemLib.h"
 #include "tmr.h"
 
@@ -73,3 +72,4 @@ void ActualizaExcitacionDisplay (fsm_t* this);
 void timer_refresco_display_isr (union sigval value);
 
 #endif /* _LEDDISPLAY_H_ */
+
