@@ -370,6 +370,26 @@ int CompruebaTimeoutActualizacionJuego (fsm_t* this) {
 	return result;
 }
 
+int CompruebaPausaJuego(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_PAUSA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaContinuaJuego(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_CONTINUA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
 int CompruebaFinalJuego(fsm_t* this) {
 	int result = 0;
 
@@ -393,7 +413,7 @@ int CompruebaFinalJuego(fsm_t* this) {
 void InicializaJuego(fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
-	
+
 	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
 
 	// A completar por el alumno
@@ -407,10 +427,10 @@ void InicializaJuego(fsm_t* this) {
 	InicializaArkanoPi(p_arkanoPi);
 
 	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
-	
+
 	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
-	
+
 	piUnlock (STD_IO_BUFFER_KEY);
 
 
@@ -436,16 +456,16 @@ void MuevePalaIzquierda (fsm_t* this) {
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	ActualizaPosicionPala(&(p_arkanoPi->pala), IZQUIERDA);
-	fflush(stdout); 
-	
+	fflush(stdout);
+
 	piLock(MATRIX_KEY); // CLAVE PANTALLA
 	ActualizaPantalla(p_arkanoPi);
 	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
-	
+
 	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
-	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
-	
+
 }
 
 // void MuevePalaDerecha (void): función similar a la anterior
@@ -462,13 +482,13 @@ void MuevePalaDerecha (fsm_t* this) {
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	ActualizaPosicionPala(&(p_arkanoPi->pala), DERECHA);
-	
+
 	piLock(MATRIX_KEY); // CLAVE PANTALLA
 	ActualizaPantalla(p_arkanoPi);
 	piUnlock(MATRIX_KEY); // CLAVE PANTALLA
-	
+
 	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
-	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);	
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
 }
 
@@ -542,11 +562,54 @@ void ActualizarJuego (fsm_t* this) {
 	piLock (STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock (STD_IO_BUFFER_KEY);
-	
+
 	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
 
 }
 
+// void PausaJuego (void): función encargada de pausar el juego
+
+void PausarJuego (fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_PAUSA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+
+	printf("PAUSA\n");
+	fflush(stdout);
+}
+
+// void ContinuaJuego (void): función encargada de continuar el juego tras una pausa
+
+void ContinuarJuego (fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	printf("Continua en:\n");
+	fflush(stdout);
+
+	printf("3\n");
+	fflush(stdout);
+	sleep(1);
+
+	printf("2\n");
+	fflush(stdout);
+	sleep(1);
+
+	printf("1\n");
+	fflush(stdout);
+	sleep(1);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_CONTINUA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	ActualizarJuego(this);
+
+}
 
 
 
@@ -562,7 +625,7 @@ void FinalJuego (fsm_t* this) {
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
-	
+
 
 	if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))==0){
 		piLock(STD_IO_BUFFER_KEY);
@@ -591,9 +654,9 @@ void ReseteaJuego (fsm_t* this) {
 
 	piLock (STD_IO_BUFFER_KEY);
 	ResetArkanoPi(p_arkanoPi);
-	
+
 	piUnlock (STD_IO_BUFFER_KEY);
-	
+
 	// A completar por el alumno
 	// ...
 }
@@ -610,5 +673,4 @@ void tmr_actualizacion_juego_isr(union sigval value) {
 	flags |= FLAG_TIMER_JUEGO;
 	piUnlock(SYSTEM_FLAGS_KEY);
 }
-
 

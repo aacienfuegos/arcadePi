@@ -68,11 +68,14 @@
 #define FLAG_MOV_IZQUIERDA 	0x08
 #define FLAG_TIMER_JUEGO	0x10
 #define FLAG_BOTON 			0x20
-#define FLAG_FIN_JUEGO		0x40
+#define FLAG_PAUSA_JUEGO	0x40
+#define FLAG_CONTINUA_JUEGO	0x80
+#define FLAG_FIN_JUEGO		0x100
 
 enum fsm_state {
 	WAIT_START,
 	WAIT_PUSH,
+	WAIT_PAUSE,
 	WAIT_END};
 
 extern int flags;

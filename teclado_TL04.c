@@ -47,7 +47,7 @@ void InicializaTeclado(TipoTeclado *p_teclado) {
 	pullUpDnControl(GPIO_KEYBOARD_ROW_2, PUD_DOWN);
 	wiringPiISR (GPIO_KEYBOARD_ROW_2, INT_EDGE_RISING,  p_teclado->rutinas_ISR[1]);
 	//p_teclado->debounceTime [teclado.filas[1]]=0;
-	
+
 	pinMode (GPIO_KEYBOARD_ROW_3, INPUT);
 	pullUpDnControl(GPIO_KEYBOARD_ROW_3, PUD_DOWN);
 	wiringPiISR (GPIO_KEYBOARD_ROW_3, INT_EDGE_RISING,  p_teclado->rutinas_ISR[2]);
@@ -124,7 +124,7 @@ int CompruebaTimeoutColumna (fsm_t* this) {
 	TipoTeclado *p_teclado;
 	p_teclado = (TipoTeclado*)(this->user_data);
 
-	// completado	
+	// completado
 	piLock(KEYBOARD_KEY);
 	result = (teclado.flags & FLAG_TIMEOUT_COLUMNA_TECLADO);
 	piUnlock(KEYBOARD_KEY);
@@ -168,8 +168,8 @@ void TecladoExcitaColumna (fsm_t* this) {
 	/*printf("%i",p_teclado->columna_actual);*/
 
 	tmr_startms(teclado.tmr_duracion_columna, TIMEOUT_COLUMNA_TECLADO);
-	
-	
+
+
 }
 
 void ProcesaTeclaPulsada (fsm_t* this) {
@@ -179,10 +179,10 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 	piLock(KEYBOARD_KEY);
 	teclado.flags &= (~FLAG_TECLA_PULSADA);
 	piUnlock(KEYBOARD_KEY);
-	
+
 	//p_teclado->teclaPulsada.col = p_teclado->columna_actual;
 	//p_teclado->teclaPulsada.row = rowPulsada;
-	
+
 	/*piLock(STD_IO_BUFFER_KEY);*/
 	/*printf("%i",p_teclado->teclaPulsada.row);*/
 	/*printf("%i",p_teclado->teclaPulsada.col);*/
@@ -190,17 +190,27 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 	/*piUnlock(STD_IO_BUFFER_KEY);*/
 
 	// completado
-	
+
 
 	switch(p_teclado->teclaPulsada.col){
 		case COLUMNA_1: //
-			/*printf("0");*/
-			//fflush(stdout);
+			if(p_teclado->teclaPulsada.row==0){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_PAUSA_JUEGO;
+				piUnlock(SYSTEM_FLAGS_KEY);
+				/* printf("\n Mov. izq.\n"); */
+				fflush(stdout);
+			}
 			break;
 		case COLUMNA_2: // tecla 0 (s14) movimiento izquierda
-			/*printf("1");*/
-			//fflush(stdout);
-			if(p_teclado->teclaPulsada.row==3){
+			if(p_teclado->teclaPulsada.row==0){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_CONTINUA_JUEGO;
+				piUnlock(SYSTEM_FLAGS_KEY);
+				/* printf("\n Mov. izq.\n"); */
+				fflush(stdout);
+			}
+			else if(p_teclado->teclaPulsada.row==3){
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_MOV_IZQUIERDA;
 				piUnlock(SYSTEM_FLAGS_KEY);
@@ -234,7 +244,7 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 				fflush(stdout);
 			}
 			break;
-			
+
 		default:
 			printf("\nERROR!!!! invalid number of column (%d)!!!\n", p_teclado->columna_actual);
 			fflush(stdout);
@@ -245,8 +255,8 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			break;
 	}
 
-	
-	
+
+
 }
 
 
@@ -345,7 +355,7 @@ void teclado_fila_4_isr (void) {
 		teclado.debounceTime[FILA_4]= millis() + DEBOUNCE_TIME;
 		return;
 	}
-	
+
 	piLock(KEYBOARD_KEY);
 	teclado.teclaPulsada.row = FILA_4;
 	teclado.teclaPulsada.col = teclado.columna_actual;
@@ -353,7 +363,7 @@ void teclado_fila_4_isr (void) {
 	piUnlock(KEYBOARD_KEY);
 
 	debounceTime[FILA_4] = millis () + DEBOUNCE_TIME;
-	
+
 	//while(digitalRead(GPIO_KEYBOARD_ROW_4) ==HIGH){
 		//delay(1);
 	//	delay(debounceTime[FILA_4]);
@@ -368,3 +378,4 @@ void timer_duracion_columna_isr (union sigval value) {
 	teclado.flags |= FLAG_TIMEOUT_COLUMNA_TECLADO;
 	piUnlock(KEYBOARD_KEY);
 };
+

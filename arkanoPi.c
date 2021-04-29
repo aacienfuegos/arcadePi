@@ -168,6 +168,8 @@ int main () {
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierda },
 		{ WAIT_PUSH, CompruebaMovimientoDerecha, WAIT_PUSH, MuevePalaDerecha },
+		{ WAIT_PUSH, CompruebaPausaJuego, WAIT_PAUSE, PausarJuego },
+		{ WAIT_PAUSE, CompruebaContinuaJuego, WAIT_PUSH, ContinuarJuego },
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
 		{-1, NULL, -1, NULL },
