@@ -1,7 +1,7 @@
 #ifndef _LEDDISPLAY_H_
 #define _LEDDISPLAY_H_
 
-#include <wiringPi.h>
+#include "pseudoWiringPi.h"
 #include "systemLib.h"
 #include "tmr.h"
 
