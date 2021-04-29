@@ -425,7 +425,7 @@ void InicializaJuego(fsm_t* this) {
 	piUnlock (STD_IO_BUFFER_KEY);
 
 
-	WiringPiEnableDisplay(1);
+	pseudoWiringPiEnableDisplay(1);
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -642,7 +642,7 @@ void FinalJuego (fsm_t* this) {
 		}
 	}
 
-	WiringPiEnableDisplay(0);
+	pseudoWiringPiEnableDisplay(0);
 }
 
 //void ReseteaJuego (void): función encargada de llevar a cabo la
