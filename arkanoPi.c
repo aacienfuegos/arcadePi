@@ -85,7 +85,7 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	InicializaLedDisplay(&led_display);
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
-	result = piThreadCreate (thread_explora_teclado_PC);
+	/* result = piThreadCreate (thread_explora_teclado_PC); */
 
 	if (result != 0) {
 		printf ("Thread didn't start!!!\n");
