@@ -129,10 +129,20 @@ PI_THREAD (thread_explora_teclado_PC) {
 					break;
 
 				case 's':
-					// A completar por el alumno...
-					// ...
 					piLock(KEYBOARD_KEY);
 					flags |= FLAG_BOTON;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'p':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_PAUSA_JUEGO;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'r':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_CONTINUA_JUEGO;
 					piUnlock(KEYBOARD_KEY);
 					break;
 
