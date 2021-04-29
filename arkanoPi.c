@@ -164,7 +164,7 @@ void delay_until (unsigned int next) {
 	}
 }
 
-int arkano_main () {
+int main () {
 	unsigned int next;
 
 	// Maquina de estados: lista de transiciones
@@ -217,6 +217,6 @@ int arkano_main () {
 	fsm_destroy (arkanoPi_fsm);
 	fsm_destroy (teclado_fsm);
 	fsm_destroy (tecla_fsm);
-	fsm_fire (display_fsm);
+		fsm_fire (display_fsm);
 }
 

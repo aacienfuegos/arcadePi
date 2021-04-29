@@ -51,10 +51,4 @@ void tmr_actualizacion_juego_isr(union sigval value);
 //------------------------------------------------------
 PI_THREAD(thread_explora_teclado_PC);
 
-//------------------------------------------------------
-// MAIN FUNCTION
-//------------------------------------------------------
-int arkano_main();
-
 #endif /* ARKANOPI_H_ */
-
