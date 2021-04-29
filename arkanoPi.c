@@ -58,6 +58,8 @@ TipoLedDisplay led_display = {
 		GPIO_LED_DISPLAY_ROW_7
 
 	},
+
+	.p_columna = 0,
 	// A completar por el alumno...
 	// ...
 };
@@ -137,12 +139,6 @@ PI_THREAD (thread_explora_teclado_PC) {
 				case 'p':
 					piLock(KEYBOARD_KEY);
 					flags |= FLAG_PAUSA_JUEGO;
-					piUnlock(KEYBOARD_KEY);
-					break;
-
-				case 'r':
-					piLock(KEYBOARD_KEY);
-					flags |= FLAG_CONTINUA_JUEGO;
 					piUnlock(KEYBOARD_KEY);
 					break;
 

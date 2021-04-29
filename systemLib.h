@@ -48,14 +48,14 @@
 
 
 // cambiar gpios por los que estamos usando
-#define GPIO_LED_DISPLAY_COL_1	11
+#define GPIO_LED_DISPLAY_COL_1	26
 #define GPIO_LED_DISPLAY_COL_2	14
 #define GPIO_LED_DISPLAY_COL_3	17
 #define GPIO_LED_DISPLAY_COL_4	18 // not used
 #define GPIO_LED_DISPLAY_ROW_1	4
 #define GPIO_LED_DISPLAY_ROW_2	7
-#define GPIO_LED_DISPLAY_ROW_3	8
-#define GPIO_LED_DISPLAY_ROW_4	10
+#define GPIO_LED_DISPLAY_ROW_3	16
+#define GPIO_LED_DISPLAY_ROW_4	27
 #define GPIO_LED_DISPLAY_ROW_5	22
 #define GPIO_LED_DISPLAY_ROW_6	23
 #define GPIO_LED_DISPLAY_ROW_7	24
@@ -69,8 +69,7 @@
 #define FLAG_TIMER_JUEGO	0x10
 #define FLAG_BOTON 			0x20
 #define FLAG_PAUSA_JUEGO	0x40
-#define FLAG_CONTINUA_JUEGO	0x80
-#define FLAG_FIN_JUEGO		0x100
+#define FLAG_FIN_JUEGO		0x80
 
 enum fsm_state {
 	WAIT_START,

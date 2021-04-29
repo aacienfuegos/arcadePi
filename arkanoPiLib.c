@@ -1,4 +1,5 @@
 #include "arkanoPiLib.h"
+#include "ledDisplay.h"
 
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{1,1,1,1,1,1,1,1}, // 0xFF
@@ -380,16 +381,6 @@ int CompruebaPausaJuego(fsm_t* this) {
 	return result;
 }
 
-int CompruebaContinuaJuego(fsm_t* this) {
-	int result = 0;
-
-	piLock(SYSTEM_FLAGS_KEY);
-	result = (flags & FLAG_CONTINUA_JUEGO);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
-	return result;
-}
-
 int CompruebaFinalJuego(fsm_t* this) {
 	int result = 0;
 
@@ -577,6 +568,13 @@ void PausarJuego (fsm_t* this) {
 	flags &= (~FLAG_PAUSA_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
+	int i,j;
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_pausa.matriz[i][j];
+		}
+	}
+
 
 	printf("PAUSA\n");
 	fflush(stdout);
@@ -635,6 +633,13 @@ void FinalJuego (fsm_t* this) {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
+		
+		int i,j;
+		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+			for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+				p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_final.matriz[i][j];
+			}
+		}
 	}
 
 	/*WiringPiEnableDisplay(0);*/

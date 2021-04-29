@@ -7,7 +7,7 @@
 
 // REFRESCO DISPLAY
 // ATENCION: Valor a modificar por el alumno
-#define TIMEOUT_COLUMNA_DISPLAY 1
+#define TIMEOUT_COLUMNA_DISPLAY 60
 
 #define NUM_PINES_CONTROL_COLUMNAS_DISPLAY	3
 #define NUM_COLUMNAS_DISPLAY	8
@@ -37,6 +37,7 @@ typedef struct {
 extern TipoLedDisplay led_display;
 extern tipo_pantalla pantalla_inicial;
 extern tipo_pantalla pantalla_final;
+extern tipo_pantalla pantalla_pausa;
 extern fsm_trans_t fsm_trans_excitacion_display[];
 
 //------------------------------------------------------

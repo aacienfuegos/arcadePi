@@ -19,9 +19,21 @@ tipo_pantalla pantalla_final = {
 	{0,0,1,0,0,1,0,0},
 	{0,0,1,0,0,1,0,0},
 	{0,0,0,0,0,0,0,0},
-	{0,1,0,0,0,0,1,0},
-	{0,1,1,0,0,1,1,0},
 	{0,0,1,1,1,1,0,0},
+	{0,1,1,0,0,1,1,0},
+	{0,1,0,0,0,0,1,0},
+	}
+};
+
+tipo_pantalla pantalla_pausa = {
+	.matriz = {
+	{0,0,0,0,0,0,0,0},
+	{0,0,1,0,0,1,0,0},
+	{0,0,1,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,1,1,1,1,1,1,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
 	}
 };
 
@@ -153,14 +165,15 @@ void ActualizaLedDisplay (TipoLedDisplay *led_display) {
 	// A completar por el alumno...
 	// ...
 	ApagaFilas(led_display);
-	int i, j = 0;
+	ExcitaColumnas(led_display->p_columna);
+	int i;
 
 	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
-		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
-			ExcitaColumnas(j);
-			digitalWrite(led_display->filas[i], !led_display->pantalla.matriz[i][j]);
-		}
+		digitalWrite(led_display->filas[i], !led_display->pantalla.matriz[i][led_display->p_columna]);
 	}
+	
+	led_display->p_columna++;
+	if(led_display->p_columna >= NUM_COLUMNAS_DISPLAY) led_display->p_columna = 0;
 
 	return;
 }
