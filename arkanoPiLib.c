@@ -604,7 +604,7 @@ void ContinuarJuego (fsm_t* this) {
 	sleep(1);
 
 	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_CONTINUA_JUEGO);
+	flags &= (~FLAG_PAUSA_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	ActualizarJuego(this);
