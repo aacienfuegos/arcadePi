@@ -425,7 +425,7 @@ void InicializaJuego(fsm_t* this) {
 	piUnlock (STD_IO_BUFFER_KEY);
 
 
-	/*WiringPiEnableDisplay(1);*/
+	WiringPiEnableDisplay(1);
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -633,7 +633,7 @@ void FinalJuego (fsm_t* this) {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
-		
+
 		int i,j;
 		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
 			for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
@@ -642,7 +642,7 @@ void FinalJuego (fsm_t* this) {
 		}
 	}
 
-	/*WiringPiEnableDisplay(0);*/
+	WiringPiEnableDisplay(0);
 }
 
 //void ReseteaJuego (void): función encargada de llevar a cabo la
