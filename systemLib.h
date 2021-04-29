@@ -16,7 +16,7 @@
 #include "fsm.h"
 #include "tmr.h"
 
-#define __SIN_wiringPi__
+/* #define __SIN_wiringPi__ */
 #define CLK_MS 					1
 
 // ATENCION: Valores a modificar por el alumno
