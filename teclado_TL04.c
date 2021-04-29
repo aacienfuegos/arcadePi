@@ -214,7 +214,7 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_MOV_IZQUIERDA;
 				piUnlock(SYSTEM_FLAGS_KEY);
-				printf("\n Mov. izq.\n");
+				//printf("\n Mov. izq.\n");
 				fflush(stdout);
 			}
 			break;
