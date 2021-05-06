@@ -1,11 +1,11 @@
-CC = gcc
+CC = arm-linux-gnueabihf-gcc
 CFLAGS = -g
-LDFLAGS = -lpthread -lrt
-IFOLDER = -I ~/uni/SDG2/project/include
-LFOLDER = -L ~/uni/SDG2/project/lib
+LDFLAGS = -lpthread -lrt -lwiringPi -lbcm2835
+IFOLDER = -I ./include
+LFOLDER = -L ./lib
 OUTFILE = arkanopi
-OBJS = arkanoPi.o arkanoPiLib.o fsm.o kbhit.o ledDisplay.o pseudoWiringPi.o teclado_TL04.o tmr.o
-SRCS = arkanoPi.c arkanoPiLib.c fsm.c kbhit.c ledDisplay.c pseudoWiringPi.c teclado_TL04.c tmr.c
+OBJS = arkanoPi.o arkanoPiLib.o fsm.o kbhit.o ledDisplay.o teclado_TL04.o tmr.o
+SRCS = arkanoPi.c arkanoPiLib.c fsm.c kbhit.c ledDisplay.c teclado_TL04.c tmr.c
 
 $(OUTFILE): $(OBJS)
 	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) -o $(OUTFILE) $(OBJS) $(LDFLAGS)
