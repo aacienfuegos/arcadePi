@@ -1,4 +1,5 @@
 CC = arm-linux-gnueabihf-gcc
+CC = ./../raspi_tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
 CFLAGS = -g
 LDFLAGS = -lpthread -lrt -lwiringPi -lbcm2835
 IFOLDER = -I ./include
