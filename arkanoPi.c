@@ -1,5 +1,8 @@
 
 #include "arkanoPi.h"
+/* #include "led_text.c" */
+#include <stdio.h>
+#include <string.h>
 
 int flags = 0;
 
@@ -165,6 +168,9 @@ void delay_until (unsigned int next) {
 }
 
 int main () {
+	/* char letter[] = {'a','b','c'}; */
+	/* char letter[] = "qwerasdf"; */
+	/* led_text_main(letter); */
 	unsigned int next;
 
 	// Maquina de estados: lista de transiciones

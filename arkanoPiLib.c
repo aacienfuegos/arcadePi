@@ -589,23 +589,11 @@ void ContinuarJuego (fsm_t* this) {
 	printf("Continua en:\n");
 	fflush(stdout);
 
-	printf("3\n");
-	fflush(stdout);
-	sleep(1);
-
-	printf("2\n");
-	fflush(stdout);
-	sleep(1);
-
-	printf("1\n");
-	fflush(stdout);
-	sleep(1);
+	led_text_main("321");
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_PAUSA_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
-
-	ActualizarJuego(this);
 
 }
 

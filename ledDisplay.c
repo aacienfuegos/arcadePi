@@ -56,39 +56,16 @@ void InicializaLedDisplay (TipoLedDisplay *led_display) {
 	    return;
 	}
 
-	/* pinMode (GPIO_LED_DISPLAY_ROW_1, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_1, HIGH); */
+	restartGPIO();
 
-	/* pinMode (GPIO_LED_DISPLAY_ROW_2, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_2, HIGH); */
+	led_display->pantalla = pantalla_inicial;
+	ActualizaLedDisplay(led_display);
 
-	/* pinMode (GPIO_LED_DISPLAY_ROW_3, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_3, HIGH); */
+	led_display->tmr_refresco_display = tmr_new (timer_refresco_display_isr);
+	tmr_startms((tmr_t*)(led_display->tmr_refresco_display),TIMEOUT_COLUMNA_DISPLAY);
+}
 
-	/* pinMode (GPIO_LED_DISPLAY_ROW_4, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_4, HIGH); */
-
-	/* pinMode (GPIO_LED_DISPLAY_ROW_5, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_4, HIGH); */
-
-	/* pinMode (GPIO_LED_DISPLAY_ROW_6, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_6, HIGH); */
-
-	/* pinMode (GPIO_LED_DISPLAY_ROW_7, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_ROW_7, HIGH); */
-
-	/* pinMode (GPIO_LED_DISPLAY_COL_1, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_COL_1, LOW); */
-
-	/* pinMode (GPIO_LED_DISPLAY_COL_2, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_COL_2, LOW); */
-
-	/* pinMode (GPIO_LED_DISPLAY_COL_3, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_COL_3, LOW); */
-
-	/* pinMode (GPIO_LED_DISPLAY_COL_4, OUTPUT); */
-	/* digitalWrite(GPIO_LED_DISPLAY_COL_4, LOW); */
-
+void restartGPIO(){
 	pinMode(GPIO_LED_DISPLAY_ROW_1, OUTPUT);
 	pinMode(GPIO_LED_DISPLAY_ROW_2, OUTPUT);
 	pinMode(GPIO_LED_DISPLAY_ROW_3, OUTPUT);
@@ -99,12 +76,6 @@ void InicializaLedDisplay (TipoLedDisplay *led_display) {
 	pinMode(GPIO_LED_DISPLAY_COL_1, OUTPUT);
 	pinMode(GPIO_LED_DISPLAY_COL_2, OUTPUT);
 	pinMode(GPIO_LED_DISPLAY_COL_3, OUTPUT);
-
-	led_display->pantalla = pantalla_inicial;
-	ActualizaLedDisplay(led_display);
-
-	led_display->tmr_refresco_display = tmr_new (timer_refresco_display_isr);
-	tmr_startms((tmr_t*)(led_display->tmr_refresco_display),TIMEOUT_COLUMNA_DISPLAY);
 }
 
 //------------------------------------------------------

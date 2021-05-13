@@ -4,8 +4,8 @@ LDFLAGS = -lpthread -lrt -lwiringPi -lbcm2835
 IFOLDER = -I ./include
 LFOLDER = -L ./lib
 OUTFILE = arkanopi
-OBJS = arkanoPi.o arkanoPiLib.o fsm.o kbhit.o ledDisplay.o teclado_TL04.o tmr.o
-SRCS = arkanoPi.c arkanoPiLib.c fsm.c kbhit.c ledDisplay.c teclado_TL04.c tmr.c
+OBJS = arkanoPi.o arkanoPiLib.o fsm.o kbhit.o ledDisplay.o teclado_TL04.o tmr.o led_text.o
+SRCS = arkanoPi.c arkanoPiLib.c fsm.c kbhit.c ledDisplay.c teclado_TL04.c tmr.c led_text.c
 
 $(OUTFILE): $(OBJS)
 	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) -o $(OUTFILE) $(OBJS) $(LDFLAGS)

@@ -45,6 +45,7 @@ extern fsm_trans_t fsm_trans_excitacion_display[];
 //------------------------------------------------------
 
 void InicializaLedDisplay (TipoLedDisplay *led_display);
+void restartGPIO();
 
 //------------------------------------------------------
 // OTROS PROCEDIMIENTOS PROPIOS DE LA LIBRERIA
