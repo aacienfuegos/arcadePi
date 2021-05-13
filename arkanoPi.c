@@ -86,6 +86,8 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	wiringPiSetupGpio();
 	InicializaTeclado(&teclado);
 	InicializaLedDisplay(&led_display);
+	led_text_main("!");
+
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	/* result = piThreadCreate (thread_explora_teclado_PC); */

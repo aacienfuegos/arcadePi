@@ -1,5 +1,8 @@
 #include "arkanoPiLib.h"
 #include "ledDisplay.h"
+#include <stdio.h>
+#include <string.h>
+
 
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{1,1,1,1,1,1,1,1}, // 0xFF
@@ -11,6 +14,10 @@ int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{0,0,0,0,0,0,0,0}, // 0x00
 
 };
+
+int score = 0;
+char c_score[17] = "0123456789ABCDEFG";
+//"ABCDEFG";
 
 //------------------------------------------------------
 // FUNCIONES DE VISUALIZACION (ACTUALIZACION DEL OBJETO PANTALLA QUE LUEGO USARA EL DISPLAY)
@@ -535,7 +542,7 @@ void ActualizarJuego (fsm_t* this) {
 	}
 	if (CompruebaReboteLadrillo(p_arkanoPi)) {
 		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
-
+		score ++;
 		if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))<= 0) {
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_FIN_JUEGO;
@@ -545,6 +552,13 @@ void ActualizarJuego (fsm_t* this) {
 	}
 
 	ActualizaPosicionPelota (&(p_arkanoPi->pelota));
+
+	char s_Score[2];
+		
+		s_Score[0] = c_score[score];
+		s_Score[1]= '\0';
+
+	led_text_main(s_Score,0);
 
 	piLock(MATRIX_KEY);
 	ActualizaPantalla (p_arkanoPi);
@@ -589,7 +603,7 @@ void ContinuarJuego (fsm_t* this) {
 	printf("Continua en:\n");
 	fflush(stdout);
 
-	led_text_main("321");
+	led_text_main("321", 1000);
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_PAUSA_JUEGO);
@@ -650,6 +664,7 @@ void ReseteaJuego (fsm_t* this) {
 
 	piUnlock (STD_IO_BUFFER_KEY);
 
+	score = 0;
 	// A completar por el alumno
 	// ...
 }
