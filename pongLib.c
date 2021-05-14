@@ -74,8 +74,6 @@ int CompruebaRebotePalaPong2 (tipo_pong pong) {
 			(pong.pelota.x + pong.pelota.trayectoria.xv < pong.pala2.x + NUM_COLUMNAS_PALA)) {
 				if ((pong.pelota.y + pong.pelota.trayectoria.yv <= pong.pala2.y)
 					&& (pong.pelota.y + pong.pelota.trayectoria.yv > pong.pala2.y - NUM_FILAS_PALA)){
-					printf("to get there: %d\n",pong.pelota.y + pong.pelota.trayectoria.yv );
-					printf("boing\n");
 					return 1;
 				}
 		}
@@ -85,8 +83,8 @@ int CompruebaRebotePalaPong2 (tipo_pong pong) {
 
 int CompruebaPunto (tipo_pong pong) {
 	// Comprobamos si no hemos conseguido devolver la pelota
-	if(pong.pelota.y + pong.pelota.trayectoria.yv >= NUM_FILAS_DISPLAY 
-		|| pong.pelota.y + pong.pelota.trayectoria.yv <= 0) {
+	if(pong.pelota.y + pong.pelota.trayectoria.yv >= NUM_FILAS_DISPLAY
+		|| pong.pelota.y + pong.pelota.trayectoria.yv < 0) {
 		// Hemos fallado
 		return 1;
 	}
@@ -354,7 +352,7 @@ void ActualizarJuegoPong (fsm_t* this) {
 		break;
 
 		}
-	} 
+	}
 	else if (CompruebaRebotePalaPong2 (*p_pong)) {
 		switch(p_pong->pelota.x + p_pong->pelota.trayectoria.xv - p_pong->pala2.x) {
 
@@ -399,7 +397,7 @@ void FinalJuegoPong (fsm_t* this) {
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
-	
+
 	if(p_pong->pelota.y >= p_pong->pala.y){
 		printf("point player 1\n");
 	}
