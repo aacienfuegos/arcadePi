@@ -11,6 +11,8 @@
 #include "commonLib.h"
 #include "ledDisplay.h"
 
+#define NUM_JUEGOS 2
+
 typedef struct {
 	tipo_arkanoPi arkanoPi;
 	tipo_pong pong;
@@ -18,26 +20,9 @@ typedef struct {
 	// tipo_otroJuego1 otroJuego1;
 	// tipo_otroJuego2 otroJuego2;
 	// ...
+	int game; // Game selected 0 arkano, 1 pong...
+	char icons[NUM_JUEGOS][2];
 } TipoSistema;
-
-//------------------------------------------------------
-// FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
-//------------------------------------------------------
-int CompruebaBotonPulsado (fsm_t* this);
-int CompruebaMovimientoIzquierda(fsm_t* this);
-int CompruebaMovimientoDerecha(fsm_t* this);
-int CompruebaTimeoutActualizacionJuego (fsm_t* this);
-int CompruebaFinalJuego(fsm_t* this);
-
-//------------------------------------------------------
-// FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
-//------------------------------------------------------
-void InicializaJuego (fsm_t* this);
-void MuevePalaIzquierda (fsm_t* this);
-void MuevePalaDerecha (fsm_t* this);
-void ActualizarJuego (fsm_t* this);
-void FinalJuego (fsm_t* this);
-void ReseteaJuego (fsm_t* this);
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION

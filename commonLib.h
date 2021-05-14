@@ -75,6 +75,7 @@ void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla);
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 int CompruebaBotonPulsado(fsm_t *this);
+int CompruebaExit(fsm_t *this);
 int CompruebaMovimientoArriba(fsm_t *this);
 int CompruebaMovimientoAbajo(fsm_t *this);
 int CompruebaMovimientoIzquierda(fsm_t *this);

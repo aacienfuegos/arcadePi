@@ -43,6 +43,12 @@ void PintaLadrillos(tipo_pantalla *p_ladrillos, tipo_pantalla *p_pantalla);
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
+int CompruebaIniciaArkano(fsm_t *this);
+
+//------------------------------------------------------
+// FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
+//------------------------------------------------------
+void ExitArkano(fsm_t *this);
 void MuevePalaIzquierda(fsm_t *this);
 void MuevePalaDerecha(fsm_t *this);
 void PausarJuego(fsm_t *this);

@@ -168,6 +168,15 @@ int CalculaLadrillosRestantes(tipo_pantalla *p_ladrillos) {
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
+void ExitArkano (fsm_t* this) {
+	tipo_arkanoPi* p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_JUEGO_ARKANOPI);
+	piUnlock(SYSTEM_FLAGS_KEY);
+}
+
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
 // el movimiento hacia la izquierda contemplado para la pala.
 // Debe garantizar la viabilidad del mismo mediante la comprobación
@@ -263,6 +272,22 @@ void ContinuarJuego (fsm_t* this) {
 	ActualizarJuego(this);
 
 }
+
+//------------------------------------------------------
+// FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
+//------------------------------------------------------
+
+int CompruebaIniciaArkano(fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_JUEGO_ARKANOPI);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
 //------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
@@ -279,11 +304,6 @@ void InicializaJuego(fsm_t* this) {
 
 	// A completar por el alumno
 	// ...
-
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_BOTON);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 
@@ -421,7 +441,7 @@ void FinalJuego (fsm_t* this) {
 void ReseteaJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
-
+	
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);

@@ -90,7 +90,7 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
-	/* result = piThreadCreate (thread_explora_teclado_PC); */
+	result = piThreadCreate (thread_explora_teclado_PC);
 
 	if (result != 0) {
 		printf ("Thread didn't start!!!\n");
@@ -147,6 +147,24 @@ PI_THREAD (thread_explora_teclado_PC) {
 					piUnlock(KEYBOARD_KEY);
 					break;
 
+				case 'j':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_MOV_ABAJO;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'k':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_MOV_ARRIBA;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
+				case 'x':
+					piLock(KEYBOARD_KEY);
+					flags |= FLAG_EXIT;
+					piUnlock(KEYBOARD_KEY);
+					break;
+
 				case 'q':
 					exit(0);
 					break;
@@ -158,6 +176,60 @@ PI_THREAD (thread_explora_teclado_PC) {
 		}
 
 		piUnlock (STD_IO_BUFFER_KEY);
+	}
+}
+
+int CompruebaExitGames(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & ~FLAG_JUEGO_ARKANOPI & ~FLAG_JUEGO_PONG);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+void SelectNextGame(){
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_MOV_ARRIBA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	/* sistema.game++; */
+	/* if(sistema.game >= NUM_JUEGOS) sistema.game = 0; */
+	sistema.game = 0;
+	led_text_main(sistema.icons[sistema.game]);
+	printf("Game %d chosen\n", sistema.game);
+}
+
+void SelectPrevGame(){
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_MOV_ABAJO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	/* sistema.game--; */
+	/* if(sistema.game < 0) sistema.game = NUM_JUEGOS-1; */
+	sistema.game = 1;
+	led_text_main(sistema.icons[sistema.game]);
+	printf("Game %d chosen\n", sistema.game);
+}
+
+void SelectGame(){
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	/* printf("%d\n", sistema.game); */
+	switch(sistema.game){
+		case 0:
+			piLock(SYSTEM_FLAGS_KEY);
+			flags |= FLAG_JUEGO_ARKANOPI;
+			piUnlock(SYSTEM_FLAGS_KEY);
+			break;
+		case 1:
+			piLock(SYSTEM_FLAGS_KEY);
+			flags |= FLAG_JUEGO_PONG;
+			piUnlock(SYSTEM_FLAGS_KEY);
+			break;
 	}
 }
 
@@ -177,8 +249,16 @@ int main () {
 
 	// Maquina de estados: lista de transiciones
 	// {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
+	fsm_trans_t selector[] = {
+		{ WAIT_PUSH, CompruebaMovimientoAbajo, WAIT_PUSH, SelectPrevGame  },
+		{ WAIT_PUSH, CompruebaMovimientoArriba, WAIT_PUSH, SelectNextGame },
+		{ WAIT_PUSH, CompruebaBotonPulsado, WAIT_END, SelectGame },
+		{ WAIT_END, CompruebaExitGames, WAIT_PUSH, SelectNextGame },
+		{-1, NULL, -1, NULL },
+	};
+
 	fsm_trans_t arkanoPi[] = {
-		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, InicializaJuego },
+		{ WAIT_START, CompruebaIniciaArkano, WAIT_PUSH, InicializaJuego },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierda },
@@ -187,11 +267,12 @@ int main () {
 		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuego },
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
 
+		{ WAIT_PUSH,  CompruebaExit, WAIT_START, ExitArkano },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
 		{-1, NULL, -1, NULL },
 	};
 	fsm_trans_t pong[] = {
-		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, InicializaJuegoPong },
+		{ WAIT_START, CompruebaIniciaPong, WAIT_PUSH, InicializaJuegoPong },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuegoPong },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierdaPong },
@@ -202,15 +283,22 @@ int main () {
 		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuegoPong },
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuegoPong },
 
-		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
+		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuegoPong },
+		{ WAIT_END,  CompruebaExit, WAIT_START, ExitPong },
 		{-1, NULL, -1, NULL },
 	};
 
 	// Configuracion e incializacion del sistema
 	ConfiguraInicializaSistema (&sistema);
+	sistema.game = 0;
+	sistema.icons[0][0] = 'O' ;
+	sistema.icons[0][1] = '\0';
+	sistema.icons[1][0] = 'P';
+	sistema.icons[1][1] = '\0';
 	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
 	sistema.pong.p_pantalla = &(led_display.pantalla);
 
+	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, selector, &sistema);
 	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
 	fsm_t* pong_fsm = fsm_new (WAIT_START, pong, &sistema);
 
@@ -227,7 +315,8 @@ int main () {
 
 	next = millis();
 	while (1) {
-		/* fsm_fire (arkanoPi_fsm); */
+		fsm_fire (selector_fsm);
+		fsm_fire (arkanoPi_fsm);
 		fsm_fire (pong_fsm);
 
 		fsm_fire (teclado_fsm);
@@ -243,7 +332,8 @@ int main () {
 	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
 	tmr_destroy((tmr_t*)(timer_duracion_columna_isr));
 
-	/* fsm_destroy (arkanoPi_fsm); */
+	fsm_destroy (selector_fsm);
+	fsm_destroy (arkanoPi_fsm);
 	fsm_destroy (pong_fsm);
 
 	fsm_destroy (teclado_fsm);

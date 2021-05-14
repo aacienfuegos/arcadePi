@@ -71,6 +71,9 @@
 #define FLAG_FIN_JUEGO		0x80
 #define FLAG_MOV_DERECHA2 	0x100
 #define FLAG_MOV_IZQUIERDA2	0x200
+#define FLAG_JUEGO_ARKANOPI	0x400
+#define FLAG_JUEGO_PONG		0x800
+#define FLAG_EXIT			0x1000
 
 enum fsm_state {
 	WAIT_START,

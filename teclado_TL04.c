@@ -194,6 +194,11 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 
 	switch(p_teclado->teclaPulsada.col){
 		case COLUMNA_1: //
+			if(p_teclado->teclaPulsada.row==0){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_EXIT;
+				piUnlock(SYSTEM_FLAGS_KEY);
+			}
 			break;
 		case COLUMNA_2: // tecla 0 (s14) movimiento izquierda
 			if(p_teclado->teclaPulsada.row==3){
@@ -222,19 +227,25 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			break;
 
 		case COLUMNA_4: // tecla C (s4) "start"
-			//p_teclado->teclaPulsada.col = COLUMNA_4;
-			/*printf("3");*/
-			//fflush(stdout);
 			if(p_teclado->teclaPulsada.row==0){
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_BOTON;
 				piUnlock(SYSTEM_FLAGS_KEY);
-				//printf("\n Inicio juego.\n");
 				fflush(stdout);
 			}
 			if(p_teclado->teclaPulsada.row==1){
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_PAUSA_JUEGO;
+				piUnlock(SYSTEM_FLAGS_KEY);
+			}
+			if(p_teclado->teclaPulsada.row==2){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_MOV_ARRIBA;
+				piUnlock(SYSTEM_FLAGS_KEY);
+			}
+			if(p_teclado->teclaPulsada.row==3){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_MOV_ABAJO;
 				piUnlock(SYSTEM_FLAGS_KEY);
 			}
 			break;

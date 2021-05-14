@@ -6,6 +6,8 @@
 // FUNCIONES DE INICIALIZACION / RESET
 //------------------------------------------------------
 
+char score_total[15] ="0123ABCDHIJKLMN";
+
 void InicializaPala2(tipo_pala *p_pala) {
 	// Pala inicialmente en el centro de la pantalla
 	InicializaPala(p_pala);
@@ -56,7 +58,6 @@ int CompruebaReboteParedesVerticalesPong (tipo_pong pong) {
 }
 
 int CompruebaRebotePalaPong (tipo_pong pong) {
-	printf("%d", pong.pala2.y);
 	if(pong.pelota.trayectoria.yv > 0) { // Esta condicion solo tiene sentido si la pelota va hacia abajo en la pantalla
 		if ((pong.pelota.x + pong.pelota.trayectoria.xv >= pong.pala.x ) &&
 			(pong.pelota.x + pong.pelota.trayectoria.xv < pong.pala.x + NUM_COLUMNAS_PALA)) {
@@ -81,19 +82,33 @@ int CompruebaRebotePalaPong2 (tipo_pong pong) {
 	return 0;
 }
 
-int CompruebaPunto (tipo_pong pong) {
+int CompruebaPunto (tipo_pong *p_pong) {
 	// Comprobamos si no hemos conseguido devolver la pelota
-	if(pong.pelota.y + pong.pelota.trayectoria.yv >= NUM_FILAS_DISPLAY 
-		|| pong.pelota.y + pong.pelota.trayectoria.yv < 0) {
-		// Hemos fallado
+	if(p_pong->pelota.y + p_pong->pelota.trayectoria.yv >= NUM_FILAS_DISPLAY ){
+		p_pong->score1 ++;
 		return 1;
 	}
+		
+	if (p_pong->pelota.y + p_pong->pelota.trayectoria.yv < 0) {
+		p_pong->score2++;
+		return 1;
+	}
+
 	return 0;
 }
 
 //------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
+
+void ExitPong (fsm_t* this) {
+	tipo_pong* p_pong;
+	p_pong = (tipo_pong*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_JUEGO_PONG);
+	piUnlock(SYSTEM_FLAGS_KEY);
+}
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
 // el movimiento hacia la izquierda contemplado para la pala.
@@ -239,6 +254,18 @@ void ContinuarJuegoPong (fsm_t* this) {
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
+int CompruebaIniciaPong (fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_JUEGO_PONG);
+	piUnlock(SYSTEM_FLAGS_KEY);
+	
+	return result;
+}
+
 int CompruebaMovimientoIzquierda2(fsm_t* this) {
 	int result = 0;
 
@@ -277,12 +304,17 @@ void InicializaJuegoPong(fsm_t* this) {
 
 	p_pong->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
 
+	p_pong->score1 = 0;
+	p_pong->score2 = 0;
+
+	char s_Score[2];
+		s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
+		s_Score[1]= '\0';
+	led_text_main(s_Score,0);
+	printf("iniciamos juego\n");
+
 	// A completar por el alumno
 	// ...
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_BOTON);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
 	piLock (STD_IO_BUFFER_KEY);
 
 	InicializaPong(p_pong);
@@ -321,13 +353,25 @@ void ActualizarJuegoPong (fsm_t* this) {
 		p_pong->pelota.trayectoria.xv = -p_pong->pelota.trayectoria.xv;
 	}
 
-	if(CompruebaPunto (*p_pong)) {
-		piLock (SYSTEM_FLAGS_KEY);
-		flags |= FLAG_FIN_JUEGO;
-		piUnlock (SYSTEM_FLAGS_KEY);
-		return;
+	if(CompruebaPunto (p_pong)) {
+		char s_Score[2];
+		
+		s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
+		s_Score[1]= '\0';
 
-	} else if (CompruebaRebotePalaPong (*p_pong)) {
+		led_text_main(s_Score,0);
+		if(p_pong->score1 >= 3 || p_pong->score2 >= 3){
+			printf("GANASTE\n");
+			piLock(SYSTEM_FLAGS_KEY);
+			flags |= FLAG_FIN_JUEGO;
+			piUnlock(SYSTEM_FLAGS_KEY);
+		} else {
+			InicializaPong(p_pong);
+			tmr_startms(p_pong->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
+		}
+		return;
+	} 
+	else if (CompruebaRebotePalaPong (*p_pong)) {
 		switch(p_pong->pelota.x + p_pong->pelota.trayectoria.xv - p_pong->pala.x) {
 
 		case 0:
@@ -389,12 +433,12 @@ void FinalJuegoPong (fsm_t* this) {
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 	
-	if(p_pong->pelota.y >= p_pong->pala.y){
-		printf("point player 2\n");
-	}
-	else if(p_pong->pelota.y <= p_pong->pala2.y){
-		printf("point player 1\n");
-	}
+	//if(p_pong->pelota.y >= p_pong->pala.y){
+	//	printf("point player 2\n");
+	//}
+	//else if(p_pong->pelota.y <= p_pong->pala2.y){
+	//	printf("point player 1\n");
+	//}
 
 
 	/* pseudoWiringPiEnableDisplay(0); */
@@ -414,7 +458,6 @@ void ReseteaJuegoPong (fsm_t* this) {
 
 	piLock (STD_IO_BUFFER_KEY);
 	ResetPong(p_pong);
-
 	piUnlock (STD_IO_BUFFER_KEY);
 
 	// A completar por el alumno

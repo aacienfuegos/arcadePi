@@ -18,7 +18,7 @@ void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pa
 }
 
 void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
-#ifdef __SIN_wiringPi__ // esto que hace?????
+/* #ifdef __SIN_wiringPi__ */ 
 	int i=0, j=0;
 
 	printf("\n[PANTALLA]\n");
@@ -32,7 +32,7 @@ void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
 		fflush(stdout);
 	}
 	fflush(stdout);
-#endif
+/* #endif */
 }
 
 void ReseteaPantalla (tipo_pantalla *p_pantalla) {
@@ -171,14 +171,45 @@ void ActualizaPosicionPelota (tipo_pelota *p_pelota) {
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
+int CompruebaBotonPulsado(fsm_t* this) {
+	int result = 0;
 
-int CompruebaBotonPulsado (fsm_t* this) {
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaExit(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_EXIT);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaMovimientoArriba(fsm_t* this) {
 	int result = 0;
 
 	// A completar por el alumno
 	// ...
 	piLock(SYSTEM_FLAGS_KEY);
-	result = (flags & FLAG_BOTON);
+	result = (flags & FLAG_MOV_ARRIBA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaMovimientoAbajo(fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_MOV_ABAJO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
