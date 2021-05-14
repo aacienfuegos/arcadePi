@@ -21,7 +21,7 @@
 
 // ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
-#define	DEBOUNCE_TIME			100
+#define	DEBOUNCE_TIME			300
 #define TIMEOUT_ACTUALIZA_JUEGO 1000
 
 // A 'key' which we can lock and unlock - values are 0 through 3
@@ -69,6 +69,8 @@
 #define FLAG_BOTON 			0x20
 #define FLAG_PAUSA_JUEGO	0x40
 #define FLAG_FIN_JUEGO		0x80
+#define FLAG_MOV_DERECHA2 	0x100
+#define FLAG_MOV_IZQUIERDA2	0x200
 
 enum fsm_state {
 	WAIT_START,

@@ -1,5 +1,4 @@
 #include "arkanoPiLib.h"
-/* #include "commonLib.h" */
 #include "ledDisplay.h"
 #include <stdio.h>
 #include <string.h>
@@ -21,6 +20,51 @@ char c_score[17] = "0123456789ABCDEFG";
 //"ABCDEFG";
 
 //------------------------------------------------------
+// FUNCIONES DE VISUALIZACION (ACTUALIZACION DEL OBJETO PANTALLA QUE LUEGO USARA EL DISPLAY)
+//------------------------------------------------------
+
+void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pantalla_inicial) {
+	int i, j = 0;
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_pantalla->matriz[i][j] = p_pantalla_inicial->matriz[i][j];
+		}
+	}
+
+	return;
+}
+
+void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
+#ifdef __SIN_wiringPi__ // esto que hace?????
+	int i=0, j=0;
+
+	printf("\n[PANTALLA]\n");
+	fflush(stdout);
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			printf("%d", p_pantalla->matriz[i][j]);
+			fflush(stdout);
+		}
+		printf("\n");
+		fflush(stdout);
+	}
+	fflush(stdout);
+#endif
+}
+
+void ReseteaPantalla (tipo_pantalla *p_pantalla) {
+	int i=0, j=0;
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_pantalla->matriz[i][j] = 0;
+		}
+	}
+}
+
+
+//------------------------------------------------------
 // FUNCIONES DE INICIALIZACION / RESET
 //------------------------------------------------------
 
@@ -34,6 +78,62 @@ void InicializaLadrillos(tipo_pantalla *p_ladrillos) {
 	}
 }
 
+void InicializaPelota(tipo_pelota *p_pelota) {
+	// Aleatorizamos la posicion inicial de la pelota
+	/*p_pelota->x = rand() % NUM_COLUMNAS_DISPLAY;*/
+	/*p_pelota->y = 2 + rand() % (NUM_FILAS_DISPLAY-2); // 2 evita que aparezca encima de ladrillos y para que no empiece demasiado pegada al suelo de la pantalla*/
+
+	// Pelota inicialmente en el centro de la pantalla
+	p_pelota->x = NUM_COLUMNAS_DISPLAY/2 - 1;
+	p_pelota->y = NUM_FILAS_DISPLAY/2 -1 ;
+
+	InicializaPosiblesTrayectorias(p_pelota);
+
+	// Trayectoria inicial
+	//p_pelota->trayectoria.xv = 0;
+	//p_pelota->trayectoria.yv = 1;
+	/*CambiarDireccionPelota(p_pelota, rand() % p_pelota->num_posibles_trayectorias);*/
+	CambiarDireccionPelota(p_pelota, ABAJO);
+}
+
+void InicializaPala(tipo_pala *p_pala) {
+	// Pala inicialmente en el centro de la pantalla
+	p_pala->x = NUM_COLUMNAS_DISPLAY/2 - p_pala->ancho/2;
+	p_pala->y = NUM_FILAS_DISPLAY - 1;
+	p_pala->ancho = NUM_COLUMNAS_PALA;
+	p_pala->alto = NUM_FILAS_PALA;
+}
+
+void InicializaPosiblesTrayectorias(tipo_pelota *p_pelota) {
+	p_pelota->num_posibles_trayectorias = 0;
+	p_pelota->posibles_trayectorias[ARRIBA_IZQUIERDA].xv = -1;
+	p_pelota->posibles_trayectorias[ARRIBA_IZQUIERDA].yv = -1;
+	p_pelota->num_posibles_trayectorias++;
+	p_pelota->posibles_trayectorias[ARRIBA].xv = 0;
+	p_pelota->posibles_trayectorias[ARRIBA].yv = -1;
+	p_pelota->num_posibles_trayectorias++;
+	p_pelota->posibles_trayectorias[ARRIBA_DERECHA].xv = 1;
+	p_pelota->posibles_trayectorias[ARRIBA_DERECHA].yv = -1;
+	p_pelota->num_posibles_trayectorias++;
+
+	p_pelota->posibles_trayectorias[ABAJO_DERECHA].xv = 1;
+	p_pelota->posibles_trayectorias[ABAJO_DERECHA].yv = 1;
+	p_pelota->num_posibles_trayectorias++;
+	p_pelota->posibles_trayectorias[ABAJO].xv = 0;
+	p_pelota->posibles_trayectorias[ABAJO].yv = 1;
+	p_pelota->num_posibles_trayectorias++;
+	p_pelota->posibles_trayectorias[ABAJO_IZQUIERDA].xv = -1;
+	p_pelota->posibles_trayectorias[ABAJO_IZQUIERDA].yv = 1;
+	p_pelota->num_posibles_trayectorias++;
+
+	//p_pelota->posibles_trayectorias[IZQUIERDA].xv = -1;
+	//p_pelota->posibles_trayectorias[IZQUIERDA].yv = 0;
+	//p_pelota->num_posibles_trayectorias++;
+	//p_pelota->posibles_trayectorias[DERECHA].xv = 1;
+	//p_pelota->posibles_trayectorias[DERECHA].yv = 0;
+	//p_pelota->num_posibles_trayectorias++;
+}
+
 void PintaLadrillos(tipo_pantalla *p_ladrillos, tipo_pantalla *p_pantalla) {
 	int i=0, j=0;
 
@@ -42,6 +142,34 @@ void PintaLadrillos(tipo_pantalla *p_ladrillos, tipo_pantalla *p_pantalla) {
 			p_pantalla->matriz[i][j] = p_ladrillos->matriz[i][j];
 		}
     }
+}
+
+void PintaPala(tipo_pala *p_pala, tipo_pantalla *p_pantalla) {
+	int i=0, j=0;
+
+	for(i=0;i<NUM_FILAS_PALA;i++) {
+		for(j=0;j<NUM_COLUMNAS_PALA;j++) {
+			if (( (p_pala->y+i >= 0) && (p_pala->y+i < NUM_FILAS_DISPLAY) ) &&
+				( (p_pala->x+j >= 0) && (p_pala->x+j < NUM_COLUMNAS_DISPLAY) ))
+				p_pantalla->matriz[p_pala->y+i][p_pala->x+j] = 1;
+		}
+	}
+}
+
+void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla) {
+	if( (p_pelota->x >= 0) && (p_pelota->x < NUM_COLUMNAS_DISPLAY) ) {
+		if( (p_pelota->y >= 0) && (p_pelota->y < NUM_FILAS_DISPLAY) ) {
+			p_pantalla->matriz[p_pelota->y][p_pelota->x] = 7;
+		}
+		else {
+			printf("\n\nPROBLEMAS!!!! posicion y=%d de la pelota INVALIDA!!!\n\n", p_pelota->y);
+			fflush(stdout);
+		}
+	}
+	else {
+		printf("\n\nPROBLEMAS!!!! posicion x=%d de la pelota INVALIDA!!!\n\n", p_pelota->x);
+		fflush(stdout);
+	}
 }
 
 void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi) {
@@ -75,6 +203,40 @@ void ResetArkanoPi(tipo_arkanoPi *p_arkanoPi) {
 	InicializaLadrillos((tipo_pantalla*)(&(p_arkanoPi->ladrillos)));
 	InicializaPelota((tipo_pelota*)(&(p_arkanoPi->pelota)));
 	InicializaPala((tipo_pala*)(&(p_arkanoPi->pala)));
+}
+
+void CambiarDireccionPelota(tipo_pelota *p_pelota, enum t_direccion direccion) {
+	if((direccion < 0)||(direccion > p_pelota->num_posibles_trayectorias)) {
+		printf("[ERROR!!!!][direccion NO VALIDA!!!!][%d]", direccion);
+		return;
+	}
+	else {
+		p_pelota->trayectoria.xv = p_pelota->posibles_trayectorias[direccion].xv;
+		p_pelota->trayectoria.yv = p_pelota->posibles_trayectorias[direccion].yv;
+	}
+}
+
+void ActualizaPosicionPala(tipo_pala *p_pala, enum t_direccion direccion) {
+	switch (direccion) {
+		case DERECHA:
+			// Dejamos que la pala rebase parcialmente el límite del area de juego
+			if( p_pala->x + 1 + p_pala->ancho <= NUM_COLUMNAS_DISPLAY + 2 )
+				p_pala->x = p_pala->x + 1;
+			break;
+		case IZQUIERDA:
+			// Dejamos que la pala rebase parcialmente el límite del area de juego
+			if( p_pala->x - 1 >= -2)
+					p_pala->x = p_pala->x - 1;
+			break;
+		default:
+			printf("[ERROR!!!!][direccion NO VALIDA!!!!][%d]", direccion);
+			break;
+	}
+}
+
+void ActualizaPosicionPelota (tipo_pelota *p_pelota) {
+	p_pelota->x += p_pelota->trayectoria.xv;
+	p_pelota->y += p_pelota->trayectoria.yv;
 }
 
 int CompruebaReboteLadrillo (tipo_arkanoPi *p_arkanoPi) {
@@ -165,8 +327,113 @@ int CalculaLadrillosRestantes(tipo_pantalla *p_ladrillos) {
 }
 
 //------------------------------------------------------
+// FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
+//------------------------------------------------------
+
+int CompruebaBotonPulsado (fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaMovimientoIzquierda(fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_MOV_IZQUIERDA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaMovimientoDerecha(fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_MOV_DERECHA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaTimeoutActualizacionJuego (fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaPausaJuego(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_PAUSA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaFinalJuego(fsm_t* this) {
+	int result = 0;
+
+	// A completar por el alumno
+	// ...
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_FIN_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+//------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
+
+// void InicializaJuego (void): funcion encargada de llevar a cabo
+// la oportuna inicialización de toda variable o estructura de datos
+// que resulte necesaria para el desarrollo del juego.
+
+void InicializaJuego(fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
+
+	// A completar por el alumno
+	// ...
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock (STD_IO_BUFFER_KEY);
+	InicializaArkanoPi(p_arkanoPi);
+
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
+
+	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+
+	piUnlock (STD_IO_BUFFER_KEY);
+
+
+	/* pseudoWiringPiEnableDisplay(1); */
+}
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
 // el movimiento hacia la izquierda contemplado para la pala.
@@ -221,81 +488,6 @@ void MuevePalaDerecha (fsm_t* this) {
 	piLock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY); // CLAVE E/S STD
-}
-
-// void PausaJuego (void): función encargada de pausar el juego
-
-void PausarJuego (fsm_t* this) {
-	tipo_arkanoPi *p_arkanoPi;
-	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
-
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_PAUSA_JUEGO);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
-	int i,j;
-	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
-		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
-			p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_pausa.matriz[i][j];
-		}
-	}
-
-
-	printf("PAUSA\n");
-	fflush(stdout);
-}
-
-// void ContinuaJuego (void): función encargada de continuar el juego tras una pausa
-
-void ContinuarJuego (fsm_t* this) {
-	tipo_arkanoPi *p_arkanoPi;
-	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
-
-	printf("Continua en:\n");
-	fflush(stdout);
-
-	led_text_main("321",1000);
-
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_PAUSA_JUEGO);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
-	ActualizarJuego(this);
-
-}
-//------------------------------------------------------
-// FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
-//------------------------------------------------------
-
-// void InicializaJuego (void): funcion encargada de llevar a cabo
-// la oportuna inicialización de toda variable o estructura de datos
-// que resulte necesaria para el desarrollo del juego.
-
-void InicializaJuego(fsm_t* this) {
-	tipo_arkanoPi *p_arkanoPi;
-	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
-
-	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
-
-	// A completar por el alumno
-	// ...
-
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_BOTON);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
-	piLock (STD_IO_BUFFER_KEY);
-	InicializaArkanoPi(p_arkanoPi);
-
-	tmr_startms(p_arkanoPi->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
-
-	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
-	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
-
-	piUnlock (STD_IO_BUFFER_KEY);
-
-
-	/* pseudoWiringPiEnableDisplay(1); */
 }
 
 // void ActualizarJuego (void): función encargada de actualizar la
@@ -380,6 +572,47 @@ void ActualizarJuego (fsm_t* this) {
 
 }
 
+// void PausaJuego (void): función encargada de pausar el juego
+
+void PausarJuego (fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_PAUSA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	int i,j;
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_pausa.matriz[i][j];
+		}
+	}
+
+
+	printf("PAUSA\n");
+	fflush(stdout);
+}
+
+// void ContinuaJuego (void): función encargada de continuar el juego tras una pausa
+
+void ContinuarJuego (fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	printf("Continua en:\n");
+	fflush(stdout);
+
+	led_text_main("321", 1000);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_PAUSA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+}
+
+
+
 // void FinalJuego (void): función encargada de mostrar en la ventana de
 // terminal los mensajes necesarios para informar acerca del resultado del juego.
 
@@ -434,5 +667,18 @@ void ReseteaJuego (fsm_t* this) {
 	score = 0;
 	// A completar por el alumno
 	// ...
+}
+
+//------------------------------------------------------
+// SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
+//------------------------------------------------------
+
+void tmr_actualizacion_juego_isr(union sigval value) {
+	// A completar por el alumno
+	// ...
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags |= FLAG_TIMER_JUEGO;
+	piUnlock(SYSTEM_FLAGS_KEY);
 }
 
