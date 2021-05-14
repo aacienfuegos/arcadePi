@@ -200,21 +200,24 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_MOV_IZQUIERDA;
 				piUnlock(SYSTEM_FLAGS_KEY);
-				//printf("\n Mov. izq.\n");
-				fflush(stdout);
+			}
+			else if(p_teclado->teclaPulsada.row==0){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_MOV_IZQUIERDA2;
+				piUnlock(SYSTEM_FLAGS_KEY);
 			}
 			break;
 
 		case COLUMNA_3: // tecla B (s15) movimiento derecha
-			//p_teclado->teclaPulsada.col = COLUMNA_3;
-			/*printf("2");*/
-			//fflush(stdout);
 			if(p_teclado->teclaPulsada.row==3){
-				//printf("\n Mov. dcha.\n");
 				piLock(SYSTEM_FLAGS_KEY);
 				flags |= FLAG_MOV_DERECHA;
 				piUnlock(SYSTEM_FLAGS_KEY);
-				fflush(stdout);
+			}
+			else if(p_teclado->teclaPulsada.row==0){
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_MOV_DERECHA2;
+				piUnlock(SYSTEM_FLAGS_KEY);
 			}
 			break;
 

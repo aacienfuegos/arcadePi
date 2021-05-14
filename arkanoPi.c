@@ -171,12 +171,29 @@ int main () {
 	// {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
 	fsm_trans_t arkanoPi[] = {
 		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, InicializaJuego },
+
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierda },
 		{ WAIT_PUSH, CompruebaMovimientoDerecha, WAIT_PUSH, MuevePalaDerecha },
 		{ WAIT_PUSH, CompruebaPausaJuego, WAIT_PAUSE, PausarJuego },
 		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuego },
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
+
+		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
+		{-1, NULL, -1, NULL },
+	};
+	fsm_trans_t pong[] = {
+		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, InicializaJuegoPong },
+
+		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuegoPong },
+		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierdaPong },
+		{ WAIT_PUSH, CompruebaMovimientoDerecha, WAIT_PUSH, MuevePalaDerechaPong },
+		{ WAIT_PUSH, CompruebaMovimientoIzquierda2, WAIT_PUSH, MuevePalaIzquierdaPong2 },
+		{ WAIT_PUSH, CompruebaMovimientoDerecha2, WAIT_PUSH, MuevePalaDerechaPong2 },
+		{ WAIT_PUSH, CompruebaPausaJuego, WAIT_PAUSE, PausarJuegoPong },
+		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuegoPong },
+		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuegoPong },
+
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
 		{-1, NULL, -1, NULL },
 	};
@@ -184,8 +201,10 @@ int main () {
 	// Configuracion e incializacion del sistema
 	ConfiguraInicializaSistema (&sistema);
 	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
+	/* sistema.pong.p_pantalla = &(led_display.pantalla); */
 
-	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
+	/* fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema); */
+	fsm_t* pong_fsm = fsm_new (WAIT_START, pong, &sistema);
 
 	// Completado
 
@@ -200,7 +219,8 @@ int main () {
 
 	next = millis();
 	while (1) {
-		fsm_fire (arkanoPi_fsm);
+		/* fsm_fire (arkanoPi_fsm); */
+		fsm_fire (pong_fsm);
 
 		fsm_fire (teclado_fsm);
 		fsm_fire (tecla_fsm);
@@ -214,7 +234,8 @@ int main () {
 	}
 	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
 	tmr_destroy((tmr_t*)(timer_duracion_columna_isr));
-	fsm_destroy (arkanoPi_fsm);
+	/* fsm_destroy (arkanoPi_fsm); */
+	fsm_destroy (pong_fsm);
 	fsm_destroy (teclado_fsm);
 	fsm_destroy (tecla_fsm);
 		fsm_fire (display_fsm);
