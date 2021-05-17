@@ -1,6 +1,5 @@
 
 #include "arkanoPi.h"
-/* #include "led_text.c" */
 #include <stdio.h>
 #include <string.h>
 
