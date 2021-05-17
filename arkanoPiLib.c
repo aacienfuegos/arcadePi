@@ -16,7 +16,6 @@ int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 
 };
 
-int score = 0;
 char c_score[17] = "0123456789ABCDEFG";
 //"ABCDEFG";
 
@@ -172,9 +171,9 @@ void ExitArkano (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_JUEGO_ARKANOPI);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(CONTROLLER_FLAGS_KEY);
+	flags_controller &= (~FLAG_JUEGO_ARKANOPI);
+	piUnlock(CONTROLLER_FLAGS_KEY);
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -280,12 +279,10 @@ void ContinuarJuego (fsm_t* this) {
 int CompruebaIniciaArkano(fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
-	piLock(SYSTEM_FLAGS_KEY);
-	result = (flags & FLAG_JUEGO_ARKANOPI);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
+	piLock(CONTROLLER_FLAGS_KEY);
+	result = (flags_controller & FLAG_JUEGO_ARKANOPI);
+	piUnlock(CONTROLLER_FLAGS_KEY);
+	
 	return result;
 }
 //------------------------------------------------------
@@ -297,8 +294,12 @@ int CompruebaIniciaArkano(fsm_t* this) {
 // que resulte necesaria para el desarrollo del juego.
 
 void InicializaJuego(fsm_t* this) {
+	printf("Starting ArkanoPi\n");
+
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	
+	p_arkanoPi->score = 0;
 
 	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
 
@@ -370,7 +371,7 @@ void ActualizarJuego (fsm_t* this) {
 	}
 	if (CompruebaReboteLadrillo(p_arkanoPi)) {
 		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
-		score ++;
+		p_arkanoPi->score ++;
 		if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))<= 0) {
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_FIN_JUEGO;
@@ -383,7 +384,7 @@ void ActualizarJuego (fsm_t* this) {
 
 	char s_Score[2];
 		
-		s_Score[0] = c_score[score];
+		s_Score[0] = c_score[p_arkanoPi->score];
 		s_Score[1]= '\0';
 
 	led_text_main(s_Score,0);
@@ -446,12 +447,16 @@ void ReseteaJuego (fsm_t* this) {
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_RESETEA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
 	piLock (STD_IO_BUFFER_KEY);
 	ResetArkanoPi(p_arkanoPi);
 
 	piUnlock (STD_IO_BUFFER_KEY);
 
-	score = 0;
+	p_arkanoPi->score = 0;
 	// A completar por el alumno
 	// ...
 }

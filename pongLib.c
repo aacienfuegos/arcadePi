@@ -105,9 +105,9 @@ void ExitPong (fsm_t* this) {
 	tipo_pong* p_pong;
 	p_pong = (tipo_pong*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_JUEGO_PONG);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(CONTROLLER_FLAGS_KEY);
+	flags_controller &= (~FLAG_JUEGO_PONG);
+	piUnlock(CONTROLLER_FLAGS_KEY);
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -257,11 +257,9 @@ void ContinuarJuegoPong (fsm_t* this) {
 int CompruebaIniciaPong (fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
-	piLock(SYSTEM_FLAGS_KEY);
-	result = (flags & FLAG_JUEGO_PONG);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(CONTROLLER_FLAGS_KEY);
+	result = (flags_controller & FLAG_JUEGO_PONG);
+	piUnlock(CONTROLLER_FLAGS_KEY);
 	
 	return result;
 }
@@ -269,8 +267,6 @@ int CompruebaIniciaPong (fsm_t* this) {
 int CompruebaMovimientoIzquierda2(fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
 	piLock(SYSTEM_FLAGS_KEY);
 	result = (flags & FLAG_MOV_IZQUIERDA2);
 	piUnlock(SYSTEM_FLAGS_KEY);
@@ -281,10 +277,18 @@ int CompruebaMovimientoIzquierda2(fsm_t* this) {
 int CompruebaMovimientoDerecha2(fsm_t* this) {
 	int result = 0;
 
-	// A completar por el alumno
-	// ...
 	piLock(SYSTEM_FLAGS_KEY);
 	result = (flags & FLAG_MOV_DERECHA2);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	return result;
+}
+
+int CompruebaFinPunto(fsm_t* this) {
+	int result = 0;
+
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_RESETEA_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	return result;
@@ -299,6 +303,8 @@ int CompruebaMovimientoDerecha2(fsm_t* this) {
 // que resulte necesaria para el desarrollo del juego.
 
 void InicializaJuegoPong(fsm_t* this) {
+	printf("Starting Pong\n");
+
 	tipo_pong *p_pong;
 	p_pong = (tipo_pong*)(this->user_data);
 
@@ -366,8 +372,9 @@ void ActualizarJuegoPong (fsm_t* this) {
 			flags |= FLAG_FIN_JUEGO;
 			piUnlock(SYSTEM_FLAGS_KEY);
 		} else {
-			InicializaPong(p_pong);
-			tmr_startms(p_pong->tmr_actualizacion_juego_isr, TIMEOUT_ACTUALIZA_JUEGO);
+			piLock(SYSTEM_FLAGS_KEY);
+			flags |= FLAG_RESETEA_JUEGO;
+			piUnlock(SYSTEM_FLAGS_KEY);
 		}
 		return;
 	} 
@@ -444,6 +451,26 @@ void FinalJuegoPong (fsm_t* this) {
 	/* pseudoWiringPiEnableDisplay(0); */
 }
 
+//void FinalRondaPong (void): función encargada de llevar a cabo la
+// reinicialización de cuantas variables o estructuras resulten
+// necesarias para dar comienzo a una nueva ronda.
+
+void FinalRondaPong(fsm_t* this){
+	tipo_pong *p_pong;
+	p_pong = (tipo_pong*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_RESETEA_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+	
+	/* pantalla de final de ronda */
+	
+	piLock (STD_IO_BUFFER_KEY);
+	ResetPong(p_pong);
+	piUnlock (STD_IO_BUFFER_KEY);
+	
+}
+
 //void ReseteaJuego (void): función encargada de llevar a cabo la
 // reinicialización de cuantas variables o estructuras resulten
 // necesarias para dar comienzo a una nueva partida.
@@ -459,8 +486,6 @@ void ReseteaJuegoPong (fsm_t* this) {
 	piLock (STD_IO_BUFFER_KEY);
 	ResetPong(p_pong);
 	piUnlock (STD_IO_BUFFER_KEY);
-
-	// A completar por el alumno
-	// ...
+	
 }
 

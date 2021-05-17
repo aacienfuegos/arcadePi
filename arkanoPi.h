@@ -6,12 +6,11 @@
 #include "fsm.h"
 #include "tmr.h"
 #include "teclado_TL04.h"
+#include "controller.h"
 #include "arkanoPiLib.h"
 #include "pongLib.h"
 #include "commonLib.h"
 #include "ledDisplay.h"
-
-#define NUM_JUEGOS 2
 
 typedef struct {
 	tipo_arkanoPi arkanoPi;
@@ -20,8 +19,6 @@ typedef struct {
 	// tipo_otroJuego1 otroJuego1;
 	// tipo_otroJuego2 otroJuego2;
 	// ...
-	int game; // Game selected 0 arkano, 1 pong...
-	char icons[NUM_JUEGOS][2];
 } TipoSistema;
 
 //------------------------------------------------------

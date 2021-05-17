@@ -2,6 +2,7 @@
 #define _TECLADO_TL04_H_
 
 #include "systemLib.h"
+/* #include "controller.h" */
 
 // REFRESCO TECLADO
 #define TIMEOUT_COLUMNA_TECLADO	25
@@ -56,6 +57,7 @@ extern TipoTeclado teclado;
 extern fsm_trans_t fsm_trans_excitacion_columnas[];
 extern fsm_trans_t fsm_trans_deteccion_pulsaciones[];
 extern int flags; // Flags generales de sistema (necesario para comunicacion inter-FMs)
+extern int flags_controller;
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS

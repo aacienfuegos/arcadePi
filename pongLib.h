@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "controller.h"
+
 #include "ledDisplay.h"
 #include "commonLib.h"
 
@@ -48,6 +50,7 @@ void ActualizaPantallaPong(tipo_pong *p_pong);
 int CompruebaIniciaPong(fsm_t *this);
 int CompruebaMovimientoIzquierda2(fsm_t *this);
 int CompruebaMovimientoDerecha2(fsm_t *this);
+int CompruebaFinPunto(fsm_t *this);
 
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
@@ -66,6 +69,7 @@ void ContinuarJuegoPong(fsm_t *this);
 void InicializaJuegoPong(fsm_t *this);
 void ActualizarJuegoPong(fsm_t *this);
 void FinalJuegoPong(fsm_t *this);
+void FinalRondaPong(fsm_t *this);
 void ReseteaJuegoPong(fsm_t *this);
 
 //------------------------------------------------------

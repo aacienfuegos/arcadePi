@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "controller.h"
+
 #include "ledDisplay.h"
 #include "commonLib.h"
 
@@ -16,6 +18,8 @@ typedef struct
 	tipo_pala pala;
 	tipo_pelota pelota;
 	tmr_t* tmr_actualizacion_juego_isr;
+	
+	int score;
 
 } tipo_arkanoPi;
 
