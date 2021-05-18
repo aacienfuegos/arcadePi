@@ -170,10 +170,18 @@ int CalculaLadrillosRestantes(tipo_pantalla *p_ladrillos) {
 void ExitArkano (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_EXIT);
+	/* flags &= (~FLAG_EXIT); */
+	piUnlock(SYSTEM_FLAGS_KEY);
 
-	piLock(CONTROLLER_FLAGS_KEY);
-	flags_controller &= (~FLAG_JUEGO_ARKANOPI);
-	piUnlock(CONTROLLER_FLAGS_KEY);
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_JUEGO_ARKANOPI);
+	/* flags &= (~FLAG_JUEGO_ARKANOPI); */
+	piUnlock(SYSTEM_FLAGS_KEY);
+	
+	printf("exiting arkano\n");
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -279,9 +287,9 @@ void ContinuarJuego (fsm_t* this) {
 int CompruebaIniciaArkano(fsm_t* this) {
 	int result = 0;
 
-	piLock(CONTROLLER_FLAGS_KEY);
-	result = (flags_controller & FLAG_JUEGO_ARKANOPI);
-	piUnlock(CONTROLLER_FLAGS_KEY);
+	piLock(SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_JUEGO_ARKANOPI);
+	piUnlock(SYSTEM_FLAGS_KEY);
 	
 	return result;
 }
@@ -294,8 +302,6 @@ int CompruebaIniciaArkano(fsm_t* this) {
 // que resulte necesaria para el desarrollo del juego.
 
 void InicializaJuego(fsm_t* this) {
-	printf("Starting ArkanoPi\n");
-
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 	
@@ -303,8 +309,34 @@ void InicializaJuego(fsm_t* this) {
 
 	p_arkanoPi->tmr_actualizacion_juego_isr = tmr_new(tmr_actualizacion_juego_isr);
 
-	// A completar por el alumno
-	// ...
+	piLock (STD_IO_BUFFER_KEY);
+	InicializaArkanoPi(p_arkanoPi);
+
+	PintaMensajeInicialPantalla(p_arkanoPi->p_pantalla, p_arkanoPi->p_pantalla);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+
+	piUnlock (STD_IO_BUFFER_KEY);
+
+
+	/* pseudoWiringPiEnableDisplay(1); */
+}
+
+// void StartJuego (void): funcion encargada de llevar a cabo
+// la oportuna inicialización de toda variable o estructura de datos
+// que resulte necesaria para el comienzo del juego.
+
+void StartJuego(fsm_t* this) {
+	printf("Starting ArkanoPi\n");
+
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_BOTON);
+	piUnlock(SYSTEM_FLAGS_KEY);
+	
+	p_arkanoPi->score = 0; // We want to restart the score every round
+
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 
@@ -318,7 +350,6 @@ void InicializaJuego(fsm_t* this) {
 
 	/* pseudoWiringPiEnableDisplay(1); */
 }
-
 // void ActualizarJuego (void): función encargada de actualizar la
 // posición de la pelota conforme a la trayectoria definida para ésta.
 // Para ello deberá identificar los posibles rebotes de la pelota para,
@@ -447,17 +478,8 @@ void ReseteaJuego (fsm_t* this) {
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_RESETEA_JUEGO);
-	piUnlock(SYSTEM_FLAGS_KEY);
-
 	piLock (STD_IO_BUFFER_KEY);
-	ResetArkanoPi(p_arkanoPi);
-
+	InicializaArkanoPi(p_arkanoPi);
 	piUnlock (STD_IO_BUFFER_KEY);
-
-	p_arkanoPi->score = 0;
-	// A completar por el alumno
-	// ...
 }
 

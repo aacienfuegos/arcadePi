@@ -62,6 +62,7 @@ void ContinuarJuego(fsm_t *this);
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 void InicializaJuego(fsm_t *this);
+void StartJuego(fsm_t *this);
 void ActualizarJuego(fsm_t *this);
 void FinalJuego(fsm_t *this);
 void ReseteaJuego(fsm_t *this);

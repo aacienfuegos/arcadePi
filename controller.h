@@ -9,10 +9,15 @@
 
 typedef struct
 {
-	int game; // Game selected 0 arkano, 1 pong...
+	int game; 
 	char icons[NUM_JUEGOS][2];
+	
 } TipoController;
 
+enum games {
+	ARKANOPI,
+	PONG
+};
 
 int CompruebaExitGames (fsm_t* this);
 
@@ -22,7 +27,6 @@ void SelectGame ();
 
 extern TipoController controller;
 extern fsm_trans_t fsm_trans_selector[];
-/* extern int flags; */
-/* extern int flags_controller; */
+extern int flags;
 
 #endif /* _CONTROLLER_H_ */

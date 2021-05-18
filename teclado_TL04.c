@@ -195,9 +195,9 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 	switch(p_teclado->teclaPulsada.col){
 		case COLUMNA_1: //
 			if(p_teclado->teclaPulsada.row==0){
-				piLock(CONTROLLER_FLAGS_KEY);
-				flags_controller |= FLAG_EXIT;
-				piUnlock(CONTROLLER_FLAGS_KEY);
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_EXIT;
+				piUnlock(SYSTEM_FLAGS_KEY);
 			}
 			break;
 		case COLUMNA_2: // tecla 0 (s14) movimiento izquierda

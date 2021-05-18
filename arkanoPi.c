@@ -4,7 +4,7 @@
 #include <string.h>
 
 int flags = 0;
-int flags_controller = 0;
+/* int flags = 0; */
 
 TipoSistema sistema;
 
@@ -181,9 +181,10 @@ PI_THREAD (thread_explora_teclado_PC) {
 					break;
 
 				case 'x':
-					piLock(CONTROLLER_FLAGS_KEY);
-					flags_controller |= FLAG_EXIT;
-					piUnlock(CONTROLLER_FLAGS_KEY);
+					piLock(SYSTEM_FLAGS_KEY);
+					flags |= FLAG_EXIT;
+					/* flags |= FLAG_EXIT; */
+					piUnlock(SYSTEM_FLAGS_KEY);
 					break;
 
 				case 'q':
@@ -217,21 +218,26 @@ int main () {
 	// Maquina de estados: lista de transiciones
 	// {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
 	fsm_trans_t arkanoPi[] = {
-		{ WAIT_START, CompruebaIniciaArkano, WAIT_PUSH, InicializaJuego },
+		{ WAIT_INICIO, CompruebaIniciaArkano, WAIT_START, InicializaJuego },
+		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, StartJuego },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierda },
 		{ WAIT_PUSH, CompruebaMovimientoDerecha, WAIT_PUSH, MuevePalaDerecha },
+
 		{ WAIT_PUSH, CompruebaPausaJuego, WAIT_PAUSE, PausarJuego },
 		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuego },
-		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
 
-		{ WAIT_PUSH,  CompruebaExit, WAIT_START, ExitArkano },
+		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
+
+		{ WAIT_PAUSE,  CompruebaExit, WAIT_INICIO, ExitArkano },
+		{ WAIT_END,  CompruebaExit, WAIT_INICIO, ExitArkano },
 		{-1, NULL, -1, NULL },
 	};
 	fsm_trans_t pong[] = {
-		{ WAIT_START, CompruebaIniciaPong, WAIT_PUSH, InicializaJuegoPong },
+		{ WAIT_INICIO, CompruebaIniciaPong, WAIT_START, InicializaJuegoPong },
+		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, StartJuegoPong },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuegoPong },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierdaPong },
@@ -242,12 +248,11 @@ int main () {
 		{ WAIT_PUSH, CompruebaPausaJuego, WAIT_PAUSE, PausarJuegoPong },
 		{ WAIT_PAUSE, CompruebaPausaJuego, WAIT_PUSH, ContinuarJuegoPong },
 
-		{ WAIT_PUSH, CompruebaFinPunto, WAIT_RESTART, FinalRondaPong },
-		{ WAIT_RESTART, CompruebaBotonPulsado, WAIT_PUSH, ActualizarJuegoPong },
-
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuegoPong },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuegoPong },
-		{ WAIT_END,  CompruebaExit, WAIT_START, ExitPong },
+
+		{ WAIT_PAUSE,  CompruebaExit, WAIT_INICIO, ExitPong },
+		{ WAIT_END,  CompruebaExit, WAIT_INICIO, ExitPong },
 		{-1, NULL, -1, NULL },
 	};
 
@@ -256,11 +261,11 @@ int main () {
 	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
 	sistema.pong.p_pantalla = &(led_display.pantalla);
 
-	fsm_t* arkanoPi_fsm = fsm_new (WAIT_START, arkanoPi, &sistema);
-	fsm_t* pong_fsm = fsm_new (WAIT_START, pong, &sistema);
+	fsm_t* arkanoPi_fsm = fsm_new (WAIT_INICIO, arkanoPi, &sistema);
+	fsm_t* pong_fsm = fsm_new (WAIT_INICIO, pong, &sistema);
 
 	// controller
-	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &controller);
+	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &(controller));
 
 	// teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
@@ -280,12 +285,10 @@ int main () {
 		fsm_fire (teclado_fsm);
 		fsm_fire (tecla_fsm);
 		fsm_fire (display_fsm);
-		// Completado
 
 		next += CLK_MS;
 		delay_until (next);
 
-		//fsm_destroy (interruptor_tmr_fsm);
 	}
 	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
 	tmr_destroy((tmr_t*)(timer_duracion_columna_isr));

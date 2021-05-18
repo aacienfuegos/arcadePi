@@ -1,14 +1,14 @@
 #ifndef _LEDDISPLAYAUX_H_
 #define _LEDDISPLAYAUX_H_
 
-typedef struct 
-{
+/* typedef struct */ 
+/* { */
 
-} TipoPantallaAux;
+/* } TipoPantallaAux; */
 
-enum display_modes = {
+/* enum display_modes = { */
 
-};
+/* }; */
 
 
 

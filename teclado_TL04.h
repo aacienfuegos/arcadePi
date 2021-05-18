@@ -57,7 +57,7 @@ extern TipoTeclado teclado;
 extern fsm_trans_t fsm_trans_excitacion_columnas[];
 extern fsm_trans_t fsm_trans_deteccion_pulsaciones[];
 extern int flags; // Flags generales de sistema (necesario para comunicacion inter-FMs)
-extern int flags_controller;
+extern int flags;
 
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS

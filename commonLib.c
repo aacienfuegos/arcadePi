@@ -199,7 +199,7 @@ int CompruebaMovimientoArriba(fsm_t* this) {
 	piLock(SYSTEM_FLAGS_KEY);
 	result = (flags & FLAG_MOV_ARRIBA);
 	piUnlock(SYSTEM_FLAGS_KEY);
-
+	
 	return result;
 }
 

@@ -34,7 +34,6 @@
 #define	SYSTEM_FLAGS_KEY	1
 #define	MATRIX_KEY			2
 #define	STD_IO_BUFFER_KEY	3
-#define	CONTROLLER_FLAGS_KEY	4
 
 // Distribucion de pines GPIO empleada para el teclado y el display
 // ATENCION: Valores a modificar por el alumno
@@ -66,30 +65,29 @@
 #define FLAG_MOV_ABAJO		0x02
 #define FLAG_MOV_DERECHA 	0x04
 #define FLAG_MOV_IZQUIERDA 	0x08
-#define FLAG_MOV_DERECHA2 	0x200
-#define FLAG_MOV_IZQUIERDA2	0x400
+#define FLAG_MOV_DERECHA2 	0x10
+#define FLAG_MOV_IZQUIERDA2	0x20
 
-#define FLAG_TIMER_JUEGO	0x10
-#define FLAG_BOTON 			0x20
+#define FLAG_TIMER_JUEGO	0x40
+#define FLAG_BOTON 			0x80
 
-#define FLAG_PAUSA_JUEGO	0x40
-#define FLAG_RESETEA_JUEGO	0x80
-#define FLAG_FIN_JUEGO		0x100
+#define FLAG_PAUSA_JUEGO	0x100
+#define FLAG_FIN_JUEGO		0x200
 
 // FLAGS CONTROL DE INTERACCION ENTRE JEUGOS
-#define FLAG_JUEGO_ARKANOPI	0x01
-#define FLAG_JUEGO_PONG		0x02
-#define FLAG_EXIT			0x04
+#define FLAG_JUEGO_ARKANOPI	0x400
+#define FLAG_JUEGO_PONG		0x800
+#define FLAG_EXIT			0x1000
 
 enum fsm_state {
+	WAIT_INICIO,
 	WAIT_START,
 	WAIT_PUSH,
 	WAIT_PAUSE,
-	WAIT_RESTART,
 	WAIT_END};
 
 extern int flags;
-extern int flags_controller;
+/* extern int flags; */
 
 #endif /* SYSTEMLIB_H_ */
 
