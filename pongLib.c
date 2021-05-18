@@ -325,6 +325,11 @@ void StartJuegoPong(fsm_t* this) {
 	tipo_pong *p_pong;
 	p_pong = (tipo_pong*)(this->user_data);
 
+	char s_Score[2];
+	s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
+	s_Score[1]= '\0';
+	led_text_main(s_Score,0);
+
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);
