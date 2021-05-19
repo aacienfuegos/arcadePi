@@ -59,6 +59,11 @@
 #define GPIO_LED_DISPLAY_ROW_6	27
 #define GPIO_LED_DISPLAY_ROW_7	24
 
+// GPIOS LED AUXILIAR
+#define LED_AUX_CLK  11
+#define LED_AUX_CS  8
+#define LED_AUX_DIN  10
+
 // FLAGS FSM CONTROL DE JUEGOS Y GESTION JUEGO
 // ATENCION: Valores a modificar por el alumno
 #define FLAG_MOV_ARRIBA 	0x01

@@ -14,7 +14,6 @@ void InicializaPala2(tipo_pala *p_pala) {
 }
 
 void ActualizaPantallaPong(tipo_pong* p_pong) {
-
     // Borro toda la pantalla
 	ReseteaPantalla((tipo_pantalla*)(p_pong->p_pantalla));
 
@@ -31,6 +30,13 @@ void ActualizaPantallaPong(tipo_pong* p_pong) {
 	PintaPelota(
 		(tipo_pelota*)(&(p_pong->pelota)),
 		(tipo_pantalla*)(p_pong->p_pantalla));
+}
+
+void ActualizaPantallaScorePong(tipo_pong* p_pong){
+	int score[2];
+	score[0] = p_pong->score1;
+	score[1] = p_pong->score2;
+	display_score(score, 2);
 }
 
 void InicializaPong(tipo_pong *p_pong) {
@@ -236,8 +242,9 @@ void ContinuarJuegoPong (fsm_t* this) {
 
 	printf("Continua en:\n");
 	fflush(stdout);
-	
-	led_text_main("321",1000);
+
+	display_text("Continua en:");
+	display_countdown(3, 1000);
 
 
 	piLock(SYSTEM_FLAGS_KEY);
@@ -298,11 +305,8 @@ void InicializaJuegoPong(fsm_t* this) {
 
 	p_pong->score1 = 0;
 	p_pong->score2 = 0;
-
-	char s_Score[2];
-		s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
-		s_Score[1]= '\0';
-	led_text_main(s_Score,0);
+	p_pong->score_round = 3;
+	ActualizaPantallaScorePong(p_pong);
 
 	piLock (STD_IO_BUFFER_KEY);
 
@@ -325,11 +329,6 @@ void StartJuegoPong(fsm_t* this) {
 	tipo_pong *p_pong;
 	p_pong = (tipo_pong*)(this->user_data);
 
-	char s_Score[2];
-	s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
-	s_Score[1]= '\0';
-	led_text_main(s_Score,0);
-
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);
@@ -343,6 +342,8 @@ void StartJuegoPong(fsm_t* this) {
 	PintaPantallaPorTerminal(p_pong->p_pantalla);
 
 	piUnlock (STD_IO_BUFFER_KEY);
+
+	ActualizaPantallaScorePong(p_pong);
 
 
 	/* pseudoWiringPiEnableDisplay(1); */
@@ -372,14 +373,11 @@ void ActualizarJuegoPong (fsm_t* this) {
 	}
 
 	if(CompruebaPunto (p_pong)) {
-		char s_Score[2];
-		
-		s_Score[0] = score_total[p_pong->score1*4+p_pong->score2];
-		s_Score[1]= '\0';
-		led_text_main(s_Score,0);
-
-		if(p_pong->score1 >= 3 || p_pong->score2 >= 3){
-			VictoriaPong(p_pong);
+		ActualizaPantallaScorePong(p_pong);
+		if(p_pong->score1 >= p_pong->score_round){
+			VictoriaPong(p_pong, 1);
+		} else if(p_pong->score2 >= p_pong->score_round){
+			VictoriaPong(p_pong, 2);
 		} else {
 			piLock(SYSTEM_FLAGS_KEY);
 			flags |= FLAG_FIN_JUEGO;
@@ -462,8 +460,11 @@ void FinalJuegoPong (fsm_t* this) {
 
 //void VictoriaPong (void): función encargada de tratar con una victoria
 
-void VictoriaPong(tipo_pong* p_pong){
-		printf("GANASTE\n");
+void VictoriaPong(tipo_pong* p_pong, int player){
+		char victory_text[15]; 
+		sprintf(victory_text, "YOU WIN PLAYER%d", player);
+		printf("%s\n", victory_text);
+		display_text(victory_text);
 		
 		p_pong->score1 = 0;
 		p_pong->score2 = 0;

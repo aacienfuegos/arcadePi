@@ -70,10 +70,6 @@ TipoLedDisplay led_display = {
 TipoController controller = {
 	.game = 0,
 
-	.icons[0][0] = 'O' ,
-	.icons[0][1] = '\0',
-	.icons[1][0] = 'P',
-	.icons[1][1] = '\0',
 };
 
 //------------------------------------------------------
@@ -95,8 +91,7 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	wiringPiSetupGpio();
 	InicializaTeclado(&teclado);
 	InicializaLedDisplay(&led_display);
-	led_text_main("!");
-
+	InitSPI();
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
 	result = piThreadCreate (thread_explora_teclado_PC);
@@ -210,9 +205,6 @@ void delay_until (unsigned int next) {
 }
 
 int main () {
-	/* char letter[] = {'a','b','c'}; */
-	/* char letter[] = "qwerasdf"; */
-	/* led_text_main(letter); */
 	unsigned int next;
 
 	// Maquina de estados: lista de transiciones
@@ -266,6 +258,9 @@ int main () {
 
 	// controller
 	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &(controller));
+	display_text("Welcome");
+	display_icon(HI_ICON);
+	printf("asdf\n");
 
 	// teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));

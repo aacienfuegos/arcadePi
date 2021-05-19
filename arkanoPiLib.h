@@ -42,6 +42,7 @@ int CompruebaFallo(tipo_arkanoPi arkanoPi);
 // PROCEDIMIENTOS PARA LA VISUALIZACION DEL JUEGO
 //------------------------------------------------------
 void ActualizaPantalla(tipo_arkanoPi *p_arkanoPi);
+void ActualizaPantallaScoreArkanoPi(tipo_arkanoPi *p_arkanoPi);
 void PintaLadrillos(tipo_pantalla *p_ladrillos, tipo_pantalla *p_pantalla);
 
 //------------------------------------------------------

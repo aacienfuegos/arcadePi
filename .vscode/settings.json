@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "leddisplay.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "wiringpi.h": "c"
     }
 }

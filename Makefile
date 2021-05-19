@@ -1,7 +1,7 @@
 CC = ./../tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
 CFLAGS = -g
-LDFLAGS = -lpthread -lrt -lwiringPi -lbcm2835
-IFOLDER = -I ./include
+LDFLAGS = -lpthread -lrt -lwiringPi 
+IFOLDER = -I ./include 
 LFOLDER = -L ./lib
 OUTFILE = arkanopi
 OBJS = arkanoPi.o controller.o commonLib.o arkanoPiLib.o pongLib.o fsm.o kbhit.o ledDisplay.o ledDisplayAux.o teclado_TL04.o tmr.o 

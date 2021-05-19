@@ -64,6 +64,12 @@ void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi) {
 		(tipo_pantalla*)(p_arkanoPi->p_pantalla));
 }
 
+void ActualizaPantallaScoreArkanoPi(tipo_arkanoPi* p_arkanoPi) {
+	int s_score[1];
+	s_score[0] = p_arkanoPi->score;
+	display_score(s_score, 1);
+}
+
 void InicializaArkanoPi(tipo_arkanoPi *p_arkanoPi) {
 	ResetArkanoPi(p_arkanoPi);
 	ActualizaPantalla(p_arkanoPi);
@@ -270,7 +276,7 @@ void ContinuarJuego (fsm_t* this) {
 	printf("Continua en:\n");
 	fflush(stdout);
 
-	led_text_main("321",1000);
+	display_countdown(3, 1000);
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_PAUSA_JUEGO);
@@ -413,12 +419,7 @@ void ActualizarJuego (fsm_t* this) {
 
 	ActualizaPosicionPelota (&(p_arkanoPi->pelota));
 
-	char s_Score[2];
-		
-		s_Score[0] = c_score[p_arkanoPi->score];
-		s_Score[1]= '\0';
-
-	led_text_main(s_Score,0);
+	ActualizaPantallaScoreArkanoPi(p_arkanoPi);
 
 	piLock(MATRIX_KEY);
 	ActualizaPantalla (p_arkanoPi);
@@ -450,10 +451,12 @@ void FinalJuego (fsm_t* this) {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS GANADO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
+		display_text("you win");
 	} else {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
+		display_text("you suck");
 
 		int i,j;
 		for(i=0;i<NUM_FILAS_DISPLAY;i++) {

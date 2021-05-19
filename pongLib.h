@@ -20,6 +20,7 @@ typedef struct
 	tmr_t* tmr_actualizacion_juego_isr;
 	int score1;
 	int score2;
+	int score_round;
 
 } tipo_pong;
 
@@ -43,6 +44,7 @@ int CompruebaPunto(tipo_pong *p_pong);
 // PROCEDIMIENTOS PARA LA VISUALIZACION DEL JUEGO
 //------------------------------------------------------
 void ActualizaPantallaPong(tipo_pong *p_pong);
+void ActualizaPantallaScorePong(tipo_pong *p_pong);
 
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
@@ -69,7 +71,7 @@ void InicializaJuegoPong(fsm_t *this);
 void StartJuegoPong(fsm_t *this);
 void ActualizarJuegoPong(fsm_t *this);
 void FinalJuegoPong(fsm_t *this);
-void VictoriaPong(tipo_pong *p_pong);
+void VictoriaPong(tipo_pong *p_pong, int player);
 void ReseteaJuegoPong(fsm_t *this);
 
 //------------------------------------------------------

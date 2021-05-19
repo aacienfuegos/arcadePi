@@ -32,8 +32,9 @@ void SelectNextGame(fsm_t* this){
 
 	/* p_controller->game++; */
 	/* if(p_controller->game >= NUM_JUEGOS) p_controller->game = 0; */
+
 	p_controller->game = ARKANOPI;
-	led_text_main(p_controller->icons[p_controller->game]);
+	display_icon(ARKANOPI_ICON);
 	printf("Game %d chosen\n", p_controller->game);
 }
 
@@ -47,8 +48,9 @@ void SelectPrevGame(fsm_t *this){
 
 	/* p_controller->game--; */
 	/* if(p_controller->game < 0) p_controller->game = NUM_JUEGOS-1; */
+
 	p_controller->game = PONG;
-	led_text_main(p_controller->icons[p_controller->game]);
+	display_icon(PONG_ICON);
 	printf("Game %d chosen\n", p_controller->game);
 }
 

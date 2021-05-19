@@ -4,13 +4,13 @@
 #include "systemLib.h"
 #include "fsm.h"
 #include "commonLib.h"
+#include "ledDisplayAux.h"
 
 #define NUM_JUEGOS 2
 
 typedef struct
 {
 	int game; 
-	char icons[NUM_JUEGOS][2];
 	
 } TipoController;
 
