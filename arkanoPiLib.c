@@ -451,12 +451,12 @@ void FinalJuego (fsm_t* this) {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS GANADO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
-		display_text("you win");
+		display_text("You Win");
 	} else {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
-		display_text("you suck");
+		display_text("You Lost");
 
 		int i,j;
 		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
