@@ -17,11 +17,6 @@
 #define uchar unsigned char
 #define uint unsigned int
 
-/* typedef struct */ 
-/* { */
-
-/* } TipoPantallaAux; */
-
 enum icons_enum {
   HI_ICON,
   ARKANOPI_ICON,
