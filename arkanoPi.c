@@ -258,8 +258,6 @@ int main () {
 
 	// controller
 	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &(controller));
-	display_text("Welcome");
-	display_icon(HI_ICON);
 
 	// teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
@@ -269,6 +267,10 @@ int main () {
 	// display
 	fsm_t* display_fsm = fsm_new (DISPLAY_ESPERA_COLUMNA, fsm_trans_excitacion_display, &(led_display));
 	led_display.tmr_refresco_display =  tmr_new (timer_refresco_display_isr);
+
+	// Start screen 
+	display_text("Welcome");
+	display_icon(HI_ICON);
 
 	next = millis();
 	while (1) {
