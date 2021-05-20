@@ -260,7 +260,6 @@ int main () {
 	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &(controller));
 	display_text("Welcome");
 	display_icon(HI_ICON);
-	printf("asdf\n");
 
 	// teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
