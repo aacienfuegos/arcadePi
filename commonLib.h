@@ -86,14 +86,6 @@ int CompruebaTimeoutActualizacionJuego(fsm_t *this);
 int CompruebaFinalJuego(fsm_t *this);
 
 //------------------------------------------------------
-// FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
-//------------------------------------------------------
-void MuevePalaIzquierda(fsm_t *this);
-void MuevePalaDerecha(fsm_t *this);
-void PausarJuego(fsm_t *this);
-void ContinuarJuego(fsm_t *this);
-
-//------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
 void tmr_actualizacion_juego_isr(union sigval value);
