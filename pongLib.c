@@ -243,7 +243,6 @@ void ContinuarJuegoPong (fsm_t* this) {
 	printf("Continua en:\n");
 	fflush(stdout);
 
-	display_text("Continua en:");
 	display_countdown(3, 1000);
 
 
