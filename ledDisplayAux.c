@@ -34,13 +34,6 @@ void Delay_xms(uint x)
 	delay(x);
 }
 
-void clear(){
-	int i;
-	for(i = 0; i < NUM_COLUMN_DISPLAYAUX; i++) {
-		Write_SPI(i+1, 0);
-	}
-}
-
 int power(int x, int y){
 	int res = 1;
 	int i;
@@ -87,11 +80,7 @@ void InitSPI()
 	Write_SPI(0x0A,0xFF);
 	Write_SPI(0x0C,0x01);
 
-	/* Write_SPI(0x09,0x00); */
-	/* Write_SPI(0x0a,0x03); */
-	/* Write_SPI(0x0b,0x07); */
-	/* Write_SPI(0x0c,0x01); */
-	/* Write_SPI(0x0f,0x00); */
+	display_clear();
 }
 
 void push(char col){
@@ -100,6 +89,14 @@ void push(char col){
 		display[i] = display[i+1];
 	}
 	display[NUM_COLUMN_DISPLAYAUX-1] = col;
+}
+
+void display_clear(){
+	int i;
+	for(i = 0; i < NUM_COLUMN_DISPLAYAUX; i++) {
+		push(0);
+	}
+	ActualizaDisplayAux();
 }
 
 

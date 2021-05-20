@@ -25,6 +25,7 @@ enum icons_enum {
 
 void InitSPI();
 
+void display_clear();
 void display_score(int score[], int nPlayers);
 void display_countdown(int start, int delay);
 void display_icon(int icon);
