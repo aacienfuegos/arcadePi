@@ -179,12 +179,10 @@ void ExitArkano (fsm_t* this) {
 	
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_EXIT);
-	/* flags &= (~FLAG_EXIT); */
 	piUnlock(SYSTEM_FLAGS_KEY);
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_JUEGO_ARKANOPI);
-	/* flags &= (~FLAG_JUEGO_ARKANOPI); */
 	piUnlock(SYSTEM_FLAGS_KEY);
 	
 	printf("exiting arkano\n");
