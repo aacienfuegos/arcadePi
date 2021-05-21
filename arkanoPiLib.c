@@ -454,7 +454,7 @@ void FinalJuego (fsm_t* this) {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
-		display_text("You Lost");
+		display_text("You Lose");
 
 		int i,j;
 		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
