@@ -18,9 +18,9 @@
 #define uint unsigned int
 
 enum icons_enum {
-  HI_ICON,
   ARKANOPI_ICON,
-  PONG_ICON
+  PONG_ICON,
+  HI_ICON
 };
 
 void InitSPI();
