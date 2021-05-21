@@ -223,6 +223,7 @@ int main () {
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
 
+		{ WAIT_START,  CompruebaExit, WAIT_INICIO, ExitArkano },
 		{ WAIT_PAUSE,  CompruebaExit, WAIT_INICIO, ExitArkano },
 		{ WAIT_END,  CompruebaExit, WAIT_INICIO, ExitArkano },
 		{-1, NULL, -1, NULL },
