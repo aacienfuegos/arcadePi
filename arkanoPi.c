@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 
+// Inicializamos las flags
 int flags = 0;
-/* int flags = 0; */
 
-TipoSistema sistema;
+// Declaramos el sistema
+TipoSistema sistema; 
 
 // Declaracion del objeto teclado
 TipoTeclado teclado = {
-	// Completado
 	.columnas = {
 		GPIO_KEYBOARD_COL_1,
 		GPIO_KEYBOARD_COL_2,
@@ -24,6 +24,8 @@ TipoTeclado teclado = {
 		GPIO_KEYBOARD_ROW_3,
 		GPIO_KEYBOARD_ROW_4
 	},
+	/* Rutinas de atención a las
+	interrupciones de las filas */
 	.rutinas_ISR = {
 		teclado_fila_1_isr,
 		teclado_fila_2_isr,
@@ -31,7 +33,6 @@ TipoTeclado teclado = {
 		teclado_fila_4_isr
 	},
 
-	// Completado
 	.columna_actual = COLUMNA_1,
 
 	.teclaPulsada.col = -1,
@@ -41,8 +42,6 @@ TipoTeclado teclado = {
 // Declaracion del objeto display
 TipoLedDisplay led_display = {
 	.pines_control_columnas = {
-		// A completar por el alumno...
-		// ...
 		GPIO_LED_DISPLAY_COL_1,
 		GPIO_LED_DISPLAY_COL_2,
 		GPIO_LED_DISPLAY_COL_3
@@ -50,8 +49,6 @@ TipoLedDisplay led_display = {
 
 	},
 	.filas = {
-		// A completar por el alumno...
-		// ...
 		GPIO_LED_DISPLAY_ROW_1,
 		GPIO_LED_DISPLAY_ROW_2,
 		GPIO_LED_DISPLAY_ROW_3,
@@ -63,13 +60,11 @@ TipoLedDisplay led_display = {
 	},
 
 	.p_columna = 0,
-	// A completar por el alumno...
-	// ...
 };
 
+// Declaracion del objeto controller
 TipoController controller = {
 	.game = 0,
-
 };
 
 //------------------------------------------------------
@@ -87,14 +82,17 @@ TipoController controller = {
 // como el thread de exploración del teclado del PC
 int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
-	// Compeltado
+
+	// Inicializamos el wiringPi
 	wiringPiSetupGpio();
+
+	// Inicializamos los componentes
 	InicializaTeclado(&teclado);
 	InicializaLedDisplay(&led_display);
 	InitSPI();
 
 	// Lanzamos thread para exploracion del teclado convencional del PC
-	result = piThreadCreate (thread_explora_teclado_PC);
+	/* result = piThreadCreate (thread_explora_teclado_PC); */
 
 	if (result != 0) {
 		printf ("Thread didn't start!!!\n");
@@ -112,7 +110,9 @@ PI_THREAD (thread_explora_teclado_PC) {
 	int teclaPulsada;
 
 	while(1) {
-		delay(10); // Wiring Pi function: pauses program execution for at least 10 ms
+		/* Wiring Pi function: pauses program */ 
+		/* execution for at least 10 ms */
+		delay(10); 
 
 		piLock (STD_IO_BUFFER_KEY);
 
@@ -120,7 +120,6 @@ PI_THREAD (thread_explora_teclado_PC) {
 			teclaPulsada = kbread();
 
 			switch(teclaPulsada) {
-				//completado
 				case 'a':
 					piLock(SYSTEM_FLAGS_KEY);
 					flags |= FLAG_MOV_IZQUIERDA;
@@ -183,6 +182,7 @@ PI_THREAD (thread_explora_teclado_PC) {
 					break;
 
 				case 'q':
+					display_clear();
 					exit(0);
 					break;
 
@@ -209,6 +209,7 @@ int main () {
 
 	// Maquina de estados: lista de transiciones
 	// {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
+
 	fsm_trans_t arkanoPi[] = {
 		{ WAIT_INICIO, CompruebaInicioArkanoPi, WAIT_START, InicializaJuego },
 		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, StartJuego },
@@ -255,18 +256,19 @@ int main () {
 	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
 	sistema.pong.p_pantalla = &(led_display.pantalla);
 
+	// Juegos
 	fsm_t* arkanoPi_fsm = fsm_new (WAIT_INICIO, arkanoPi, &sistema);
 	fsm_t* pong_fsm = fsm_new (WAIT_INICIO, pong, &sistema);
 
-	// controller
+	// Controller
 	fsm_t* selector_fsm = fsm_new (WAIT_PUSH, fsm_trans_selector, &(controller));
 
-	// teclado
+	// Teclado
 	fsm_t* teclado_fsm = fsm_new ( TECLADO_ESPERA_COLUMNA, fsm_trans_excitacion_columnas, &(teclado));
 	fsm_t* tecla_fsm = fsm_new (TECLADO_ESPERA_TECLA, fsm_trans_deteccion_pulsaciones, &(teclado));
 	teclado.tmr_duracion_columna = tmr_new (timer_duracion_columna_isr);
 
-	// display
+	// Display
 	fsm_t* display_fsm = fsm_new (DISPLAY_ESPERA_COLUMNA, fsm_trans_excitacion_display, &(led_display));
 	led_display.tmr_refresco_display =  tmr_new (timer_refresco_display_isr);
 
@@ -276,10 +278,12 @@ int main () {
 
 	next = millis();
 	while (1) {
+		// Arrancamos fsm del sw
 		fsm_fire (selector_fsm);
 		fsm_fire (arkanoPi_fsm);
 		fsm_fire (pong_fsm);
 
+		// Arrancamos fsm del hw
 		fsm_fire (teclado_fsm);
 		fsm_fire (tecla_fsm);
 		fsm_fire (display_fsm);
@@ -288,6 +292,8 @@ int main () {
 		delay_until (next);
 
 	}
+	
+	// Eliminamos las maquinas de estado
 	tmr_destroy((tmr_t*)(tmr_actualizacion_juego_isr));
 	tmr_destroy((tmr_t*)(timer_duracion_columna_isr));
 
@@ -297,6 +303,6 @@ int main () {
 
 	fsm_destroy (teclado_fsm);
 	fsm_destroy (tecla_fsm);
-		fsm_fire (display_fsm);
+	fsm_fire (display_fsm);
 }
 

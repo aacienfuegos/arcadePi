@@ -10,9 +10,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <wiringPi.h>
-#include "wiringPi.h"
 
-#include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
+#include "kbhit.h" 
 #include "fsm.h"
 #include "tmr.h"
 
@@ -92,7 +91,6 @@ enum fsm_state {
 	WAIT_END};
 
 extern int flags;
-/* extern int flags; */
 
 #endif /* SYSTEMLIB_H_ */
 

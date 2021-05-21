@@ -1,4 +1,3 @@
-
 #include "ledDisplay.h"
 
 tipo_pantalla pantalla_inicial = {
@@ -49,8 +48,7 @@ fsm_trans_t fsm_trans_excitacion_display[] = {
 //------------------------------------------------------
 
 void InicializaLedDisplay (TipoLedDisplay *led_display) {
-	// A completar por el alumno...
-	// ...
+
 	if (wiringPiSetupGpio() < 0) {
 	    fprintf (stderr, "Unable to setup wiringPi: %s\n", strerror (errno)) ;
 	    return;
@@ -83,8 +81,7 @@ void restartGPIO(){
 //------------------------------------------------------
 
 void ApagaFilas (TipoLedDisplay *led_display){
-	// A completar por el alumno...
-	// ...  completado
+
 	digitalWrite(GPIO_LED_DISPLAY_ROW_1, HIGH);
 	digitalWrite(GPIO_LED_DISPLAY_ROW_2, HIGH);
 	digitalWrite(GPIO_LED_DISPLAY_ROW_3, HIGH);
@@ -100,8 +97,6 @@ void ExcitaColumnas(int columna) {
 	digitalWrite(GPIO_LED_DISPLAY_COL_3, LOW);
 
 	switch(columna) {
-		// A completar por el alumno...
-		// ...
 		case 1:
 			digitalWrite(GPIO_LED_DISPLAY_COL_1, HIGH);
 			break;
@@ -133,8 +128,6 @@ void ExcitaColumnas(int columna) {
 }
 
 void ActualizaLedDisplay (TipoLedDisplay *led_display) {
-	// A completar por el alumno...
-	// ...
 	ApagaFilas(led_display);
 	ExcitaColumnas(led_display->p_columna);
 	int i;
@@ -158,8 +151,6 @@ int CompruebaTimeoutColumnaDisplay (fsm_t* this) {
 	TipoLedDisplay *p_ledDisplay;
 	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
-	// A completar por el alumno...
-	// ... completado
 	piLock(MATRIX_KEY);
 	result = (p_ledDisplay->flags & FLAG_TIMEOUT_COLUMNA_DISPLAY);
 	piUnlock(MATRIX_KEY);
@@ -175,9 +166,6 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 	TipoLedDisplay *p_ledDisplay;
 	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
-
-	// A completar por el alumno...
-	// ...
 	ActualizaLedDisplay(p_ledDisplay);
 
 	tmr_startms(led_display.tmr_refresco_display, TIMEOUT_COLUMNA_DISPLAY);
@@ -188,10 +176,8 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 //------------------------------------------------------
 
 void timer_refresco_display_isr (union sigval value) {
-	// A completar por el alumno...
-	// ...
+
 	piLock(MATRIX_KEY);
 	led_display.flags |= FLAG_TIMEOUT_COLUMNA_DISPLAY;
 	piUnlock(MATRIX_KEY);
 }
-

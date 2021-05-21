@@ -9,12 +9,14 @@ uchar display[8];
 /* Load font */
 #include "font-8x8.inc"
 
+// void delay_xms: funcion para realizar un delay de x milisegundos
 void Delay_xms(uint x)
 {
 	delay(x);
 }
 
-int power(int x, int y){
+// int power: funcion auxiliar de calculo de potencia
+int power(int x, int y){ 
 	int res = 1;
 	int i;
 	for(i=0; i<y; i++) {
@@ -23,7 +25,8 @@ int power(int x, int y){
 	return res;
 }
 
-int* split_num(int x){
+// funcion auxiliar de separacion en unidades y decenas
+int* split_num(int x){ 
 	static int arr[2];
 
 	arr[0]= x%10;
@@ -32,6 +35,8 @@ int* split_num(int x){
 	return arr;
 }
 
+// void Write_SPI: funcion de transmision de informacion 
+//con SPI al display
 void Write_SPI(uchar reg, uchar data)
 {
 	uint8_t buf[2];
@@ -41,14 +46,16 @@ void Write_SPI(uchar reg, uchar data)
 	wiringPiSPIDataRW(SPI_CHANNEL, buf, 2);
 }
 
+// void ActualizaDisplayAux(): funcion para actualizar 
+// la imagen del display con los valores del array display
 void ActualizaDisplayAux(){
 	int i;
 	for(i = 0; i < NUM_COLUMN_DISPLAYAUX; i++) {
-		/* Write_SPI(i+1, *((disp+char1*NUM_COLUMN_DISPLAYAUX)+i)); */
 		Write_SPI(i+1, display[i]);
 	}
 }
 
+// void InitSPI(): Inicializacion del display
 void InitSPI()
 {
 	if (wiringPiSPISetup(SPI_CHANNEL, CLOCK_SPEED) < 0) {
@@ -56,24 +63,25 @@ void InitSPI()
 	    return;
 	}
 
-	Write_SPI(0x09,0x00);
-	Write_SPI(0x0A,0xFF);
-	/* Write_SPI(0x0A,0x03); */
-	Write_SPI(0x0B,0x07);
-	Write_SPI(0x0C,0x01);
-	Write_SPI(0x0F,0x00);
+	Write_SPI(0x09,0x00); // decoder mode - no decode mode
+	Write_SPI(0x0A,0xFF); // intensity - maximum value
+	Write_SPI(0x0B,0x07); // limit scan - digits 01234567
+	Write_SPI(0x0C,0x01); // shutdown - normal shutdown
+	Write_SPI(0x0F,0x00); // display test - normal operation
 
 	display_clear();
 }
 
-void push(char col){
+// void push(): funcion encargada de actualizar el array display
+void push(char row){
 	int i;
 	for(i = 0; i < NUM_COLUMN_DISPLAYAUX - 1; i++) {
 		display[i] = display[i+1];
 	}
-	display[NUM_COLUMN_DISPLAYAUX-1] = col;
+	display[NUM_COLUMN_DISPLAYAUX-1] = row;
 }
 
+//void display_clar: funcion encargada de apagar el display
 void display_clear(){
 	int i;
 	for(i = 0; i < NUM_COLUMN_DISPLAYAUX; i++) {
@@ -82,7 +90,7 @@ void display_clear(){
 	ActualizaDisplayAux();
 }
 
-
+// void display_score: funcion encargada de mostrar la putuacion
 void display_score(int score[], int nPlayers){
 	if(nPlayers > 2) {
 		printf("Too many characters to display\n");
@@ -108,6 +116,7 @@ void display_score(int score[], int nPlayers){
 	ActualizaDisplayAux();
 }
 
+//void display_coundown: funcion encargada de mostrar la cuenta atras 
 void display_countdown(int start, int delay){
 	while(start >= 1){
 		int i;
@@ -121,6 +130,7 @@ void display_countdown(int start, int delay){
 	}
 }
 
+//void display_icon: funcion encargada de mostrar los iconos
 void display_icon(int icon){
 	printf("%d\n", icon);
 	int i;
@@ -132,15 +142,16 @@ void display_icon(int icon){
 	
 }
 
+// void display_text: funcion encargada de imprimir texto sobre la pantalla
 void display_text(char* text){
 	int i = 0;
 	for(i=0; i < strlen(text); i++) {
 		char letter = text[i];
 		
-		int col; 
+		int row; 
 		const uint8_t* bits = &font[letter*8];
-		for(col=0; col<NUM_COLUMN_DISPLAYAUX; col++){
-			push(bits[col]);
+		for(row=0; row<NUM_COLUMN_DISPLAYAUX; row++){
+			push(bits[row]);
 			ActualizaDisplayAux();
 			Delay_xms(80);
 		}

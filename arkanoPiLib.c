@@ -1,9 +1,4 @@
 #include "arkanoPiLib.h"
-/* #include "commonLib.h" */
-#include "ledDisplay.h"
-#include <stdio.h>
-#include <string.h>
-
 
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{1,1,1,1,1,1,1,1}, // 0xFF
@@ -15,9 +10,6 @@ int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{0,0,0,0,0,0,0,0}, // 0x00
 
 };
-
-char c_score[17] = "0123456789ABCDEFG";
-//"ABCDEFG";
 
 //------------------------------------------------------
 // FUNCIONES DE INICIALIZACION / RESET
@@ -64,6 +56,8 @@ void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi) {
 		(tipo_pantalla*)(p_arkanoPi->p_pantalla));
 }
 
+/* Funcion encargada de actualizar */ 
+/* el  en la pantall auxiliar */
 void ActualizaPantallaScoreArkanoPi(tipo_arkanoPi* p_arkanoPi) {
 	int s_score[1];
 	s_score[0] = p_arkanoPi->score;
@@ -141,19 +135,15 @@ int CalculaLadrillosRestantes(tipo_pantalla *p_ladrillos) {
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
+/* void ExitArkano (void): funcion engarda */
+/* de resetear las flags para volver a la pantalla */
 void ExitArkano (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 	
 	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_EXIT);
+	flags = 0; // Reseteamos todas las flags
 	piUnlock(SYSTEM_FLAGS_KEY);
-
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_JUEGO_ARKANOPI);
-	piUnlock(SYSTEM_FLAGS_KEY);
-	
-	printf("exiting arkano\n");
 }
 
 // void MuevePalaIzquierda (void): funcion encargada de ejecutar
@@ -168,8 +158,6 @@ void MuevePalaIzquierda (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	// A completar por el alumno
-	// ...
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_MOV_IZQUIERDA);
 	piUnlock(SYSTEM_FLAGS_KEY);
@@ -194,8 +182,6 @@ void MuevePalaDerecha (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	// A completar por el alumno
-	// ...
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_MOV_DERECHA);
 	piUnlock(SYSTEM_FLAGS_KEY);
@@ -212,7 +198,6 @@ void MuevePalaDerecha (fsm_t* this) {
 }
 
 // void PausaJuego (void): función encargada de pausar el juego
-
 void PausarJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
@@ -227,35 +212,28 @@ void PausarJuego (fsm_t* this) {
 			p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_pausa.matriz[i][j];
 		}
 	}
-
-
-	printf("PAUSA\n");
-	fflush(stdout);
 }
 
-// void ContinuaJuego (void): función encargada de continuar el juego tras una pausa
-
+/* void ContinuaJuego (void): función encargada */ 
+/* de continuar el juego tras una pausa */
 void ContinuarJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	printf("Continua en:\n");
-	fflush(stdout);
-
+	// Hacemos una cuenta atrás de 3 segundos
 	display_countdown(3, 1000);
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_PAUSA_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
+	// Actualizamos el juego al momento
 	ActualizarJuego(this);
-
 }
 
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
-
 int CompruebaInicioArkanoPi(fsm_t* this) {
 	int result = 0;
 
@@ -265,6 +243,7 @@ int CompruebaInicioArkanoPi(fsm_t* this) {
 	
 	return result;
 }
+
 //------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
@@ -289,7 +268,6 @@ void InicializaJuego(fsm_t* this) {
 
 	piUnlock (STD_IO_BUFFER_KEY);
 
-
 	/* pseudoWiringPiEnableDisplay(1); */
 }
 
@@ -307,7 +285,9 @@ void StartJuego(fsm_t* this) {
 	flags &= (~FLAG_BOTON);
 	piUnlock(SYSTEM_FLAGS_KEY);
 	
-	p_arkanoPi->score = 0; // We want to restart the score every round
+	// Reiniciamos la puntuación al final 
+	// de cada ronda
+	p_arkanoPi->score = 0; 
 
 	piLock (STD_IO_BUFFER_KEY);
 	InicializaArkanoPi(p_arkanoPi);
@@ -322,6 +302,7 @@ void StartJuego(fsm_t* this) {
 
 	/* pseudoWiringPiEnableDisplay(1); */
 }
+
 // void ActualizarJuego (void): función encargada de actualizar la
 // posición de la pelota conforme a la trayectoria definida para ésta.
 // Para ello deberá identificar los posibles rebotes de la pelota para,
@@ -332,7 +313,6 @@ void StartJuego(fsm_t* this) {
 // bien porque el jugador no consiga devolver la pelota, y por tanto ésta
 // rebase el límite inferior del área de juego, bien porque se agoten
 // los ladrillos visibles en el área de juego.
-
 void ActualizarJuego (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
@@ -401,17 +381,13 @@ void ActualizarJuego (fsm_t* this) {
 
 // void FinalJuego (void): función encargada de mostrar en la ventana de
 // terminal los mensajes necesarios para informar acerca del resultado del juego.
-
 void FinalJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	// A completar por el alumno
-	// ...
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_FIN_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
-
 
 	if(CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos))==0){
 		piLock(STD_IO_BUFFER_KEY);
@@ -447,7 +423,6 @@ void FinalJuego (fsm_t* this) {
 //void ReseteaJuego (void): función encargada de llevar a cabo la
 // reinicialización de cuantas variables o estructuras resulten
 // necesarias para dar comienzo a una nueva partida.
-
 void ReseteaJuego (fsm_t* this) {
 	tipo_arkanoPi *p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
@@ -460,4 +435,3 @@ void ReseteaJuego (fsm_t* this) {
 	InicializaArkanoPi(p_arkanoPi);
 	piUnlock (STD_IO_BUFFER_KEY);
 }
-

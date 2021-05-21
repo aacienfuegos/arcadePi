@@ -2,7 +2,7 @@
 #define _ARKANOPI_H_
 
 #include "systemLib.h"
-#include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
+#include "kbhit.h" // deteccion de teclas sin bloqueo
 #include "fsm.h"
 #include "tmr.h"
 #include "teclado_TL04.h"
@@ -15,10 +15,6 @@
 typedef struct {
 	tipo_arkanoPi arkanoPi;
 	tipo_pong pong;
-	// Aqui podrian añadirse otros juegos...
-	// tipo_otroJuego1 otroJuego1;
-	// tipo_otroJuego2 otroJuego2;
-	// ...
 } TipoSistema;
 
 //------------------------------------------------------
