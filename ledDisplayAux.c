@@ -7,7 +7,7 @@ uchar *data;
 uchar display[8];
 
 /* Load font */
-#include "font-8x8l.inc"
+#include "font-8x8.inc"
 
 void Delay_xms(uint x)
 {
