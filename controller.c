@@ -4,7 +4,7 @@ fsm_trans_t fsm_trans_selector[] = {
     { WAIT_PUSH, CompruebaMovimientoAbajo, WAIT_PUSH, SelectPrevGame  },
     { WAIT_PUSH, CompruebaMovimientoArriba, WAIT_PUSH, SelectNextGame },
     { WAIT_PUSH, CompruebaBotonPulsado, WAIT_END, SelectGame },
-    { WAIT_END, CompruebaExitGames, WAIT_PUSH, NULL },
+    { WAIT_END, CompruebaExitGames, WAIT_PUSH, ExitGames },
     {-1, NULL, -1, NULL },
 };
 
@@ -75,4 +75,11 @@ void SelectGame(fsm_t *this){
 			piUnlock(SYSTEM_FLAGS_KEY);
 			break;
 	}
+}
+
+void ExitGames(fsm_t* this){
+    TipoController *p_controller;
+    p_controller = (TipoController*)(this->user_data);
+	
+	display_icon(HI_ICON);
 }

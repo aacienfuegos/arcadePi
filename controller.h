@@ -21,9 +21,10 @@ enum games {
 
 int CompruebaExitGames (fsm_t* this);
 
-void SelectNextGame ();
-void SelectPrevGame ();
-void SelectGame ();
+void SelectNextGame (fsm_t* this);
+void SelectPrevGame (fsm_t* this);
+void SelectGame (fsm_t* this);
+void ExitGames (fsm_t* this);
 
 extern TipoController controller;
 extern fsm_trans_t fsm_trans_selector[];
