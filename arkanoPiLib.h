@@ -33,9 +33,6 @@ void ResetArkanoPi(tipo_arkanoPi *p_arkanoPi);
 //------------------------------------------------------
 // PROCEDIMIENTOS PARA LA GESTION DEL JUEGO
 //------------------------------------------------------
-int CompruebaReboteParedesVerticales(tipo_arkanoPi arkanoPi);
-int CompruebaReboteTecho(tipo_arkanoPi arkanoPi);
-int CompruebaRebotePala(tipo_arkanoPi arkanoPi);
 int CompruebaFallo(tipo_arkanoPi arkanoPi);
 
 //------------------------------------------------------

@@ -59,6 +59,9 @@ void ReseteaMatriz(tipo_pantalla *p_pantalla);
 //------------------------------------------------------
 // PROCEDIMIENTOS PARA LA GESTION DEL JUEGO
 //------------------------------------------------------
+int CompruebaReboteParedesVerticales (tipo_pelota pelota);
+int CompruebaReboteTecho (tipo_pelota pelota);
+int CompruebaRebotePala (tipo_pelota pelota, tipo_pala pala);
 void CambiarDireccionPelota(tipo_pelota *p_pelota, enum t_direccion direccion);
 void ActualizaPosicionPala(tipo_pala *p_pala, enum t_direccion direccion);
 void ActualizaPosicionPelota(tipo_pelota *p_pelota);

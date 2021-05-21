@@ -111,38 +111,6 @@ int CompruebaReboteLadrillo (tipo_arkanoPi *p_arkanoPi) {
 	return 0;
 }
 
-int CompruebaReboteParedesVerticales (tipo_arkanoPi arkanoPi) {
-	// Comprobamos si la nueva posicion de la pelota excede los limites de la pantalla
-	if((arkanoPi.pelota.x + arkanoPi.pelota.trayectoria.xv >= NUM_COLUMNAS_DISPLAY) ||
-		(arkanoPi.pelota.x + arkanoPi.pelota.trayectoria.xv < 0) ) {
-		// La pelota rebota contra la pared derecha o izquierda
-		return 1;
-	}
-	return 0;
-}
-
-int CompruebaReboteTecho (tipo_arkanoPi arkanoPi) {
-	// Comprobamos si la nueva posicion de la pelota excede los limites de la pantalla
-	if(arkanoPi.pelota.y + arkanoPi.pelota.trayectoria.yv < 0) {
-		// La pelota rebota contra la pared derecha o izquierda
-		return 1;
-	}
-	return 0;
-}
-
-int CompruebaRebotePala (tipo_arkanoPi arkanoPi) {
-	if(arkanoPi.pelota.trayectoria.yv > 0) { // Esta condicion solo tiene sentido si la pelota va hacia abajo en la pantalla
-		if ((arkanoPi.pelota.x + arkanoPi.pelota.trayectoria.xv >= arkanoPi.pala.x ) &&
-			(arkanoPi.pelota.x + arkanoPi.pelota.trayectoria.xv < arkanoPi.pala.x + NUM_COLUMNAS_PALA)) {
-				if ((arkanoPi.pelota.y + arkanoPi.pelota.trayectoria.yv >= arkanoPi.pala.y) &&
-					(arkanoPi.pelota.y + arkanoPi.pelota.trayectoria.yv < arkanoPi.pala.y + NUM_FILAS_PALA)) {
-					return 1;
-				}
-		}
-	}
-	return 0;
-}
-
 int CompruebaFallo (tipo_arkanoPi arkanoPi) {
 	// Comprobamos si no hemos conseguido devolver la pelota
 	if(arkanoPi.pelota.y + arkanoPi.pelota.trayectoria.yv >= NUM_FILAS_DISPLAY) {
@@ -373,11 +341,11 @@ void ActualizarJuego (fsm_t* this) {
 	flags &= (~ FLAG_TIMER_JUEGO);
 	piUnlock (SYSTEM_FLAGS_KEY);
 
-	if(CompruebaReboteParedesVerticales(*p_arkanoPi)) {
+	if(CompruebaReboteParedesVerticales(p_arkanoPi->pelota)) {
 		p_arkanoPi->pelota.trayectoria.xv = -p_arkanoPi->pelota.trayectoria.xv;
 	}
 
-	if(CompruebaReboteTecho(*p_arkanoPi)) {
+	if(CompruebaReboteTecho(p_arkanoPi->pelota)) {
 		p_arkanoPi->pelota.trayectoria.yv = -p_arkanoPi->pelota.trayectoria.yv;
 	}
 
@@ -387,7 +355,7 @@ void ActualizarJuego (fsm_t* this) {
 		piUnlock (SYSTEM_FLAGS_KEY);
 		return;
 
-	} else if (CompruebaRebotePala (*p_arkanoPi)) {
+	} else if (CompruebaRebotePala (p_arkanoPi->pelota, p_arkanoPi->pala)) {
 		switch(p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x) {
 
 		case 0:
@@ -450,11 +418,20 @@ void FinalJuego (fsm_t* this) {
 		printf("FIN DEL JUEGO: HAS GANADO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
 		display_text("You Win");
+		ActualizaPantallaScoreArkanoPi(p_arkanoPi);
+
+		int i,j;
+		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+			for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+				p_arkanoPi->p_pantalla->matriz[i][j] = pantalla_inicial.matriz[i][j];
+			}
+		}
 	} else {
 		piLock(STD_IO_BUFFER_KEY);
 		printf("FIN DEL JUEGO: HAS PERDIDO\n");
 		piUnlock(STD_IO_BUFFER_KEY);
 		display_text("You Lose");
+		ActualizaPantallaScoreArkanoPi(p_arkanoPi);
 
 		int i,j;
 		for(i=0;i<NUM_FILAS_DISPLAY;i++) {

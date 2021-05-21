@@ -51,41 +51,6 @@ void ResetPong(tipo_pong *p_pong) {
 	InicializaPala2((tipo_pala*)(&(p_pong->pala2)));
 }
 
-int CompruebaReboteParedesVerticalesPong (tipo_pong pong) {
-	// Comprobamos si la nueva posicion de la pelota excede los limites de la pantalla
-	if((pong.pelota.x + pong.pelota.trayectoria.xv >= NUM_COLUMNAS_DISPLAY) ||
-		(pong.pelota.x + pong.pelota.trayectoria.xv < 0) ) {
-		// La pelota rebota contra la pared derecha o izquierda
-		return 1;
-	}
-	return 0;
-}
-
-int CompruebaRebotePalaPong (tipo_pong pong) {
-	if(pong.pelota.trayectoria.yv > 0) { // Esta condicion solo tiene sentido si la pelota va hacia abajo en la pantalla
-		if ((pong.pelota.x + pong.pelota.trayectoria.xv >= pong.pala.x ) &&
-			(pong.pelota.x + pong.pelota.trayectoria.xv < pong.pala.x + NUM_COLUMNAS_PALA)) {
-				if ((pong.pelota.y + pong.pelota.trayectoria.yv >= pong.pala.y) &&
-					(pong.pelota.y + pong.pelota.trayectoria.yv < pong.pala.y + NUM_FILAS_PALA)) {
-					return 1;
-				}
-		}
-	}
-	return 0;
-}
-int CompruebaRebotePalaPong2 (tipo_pong pong) {
-	if(pong.pelota.trayectoria.yv < 0) { // Esta condicion solo tiene sentido si la pelota va hacia abajo en la pantalla
-		if ((pong.pelota.x + pong.pelota.trayectoria.xv >= pong.pala2.x ) &&
-			(pong.pelota.x + pong.pelota.trayectoria.xv < pong.pala2.x + NUM_COLUMNAS_PALA)) {
-				if ((pong.pelota.y + pong.pelota.trayectoria.yv <= pong.pala2.y)
-					&& (pong.pelota.y + pong.pelota.trayectoria.yv > pong.pala2.y - NUM_FILAS_PALA)){
-					return 1;
-				}
-		}
-	}
-	return 0;
-}
-
 int CompruebaPunto (tipo_pong *p_pong) {
 	// Comprobamos si no hemos conseguido devolver la pelota
 	if(p_pong->pelota.y + p_pong->pelota.trayectoria.yv >= NUM_FILAS_DISPLAY ){
@@ -108,6 +73,10 @@ int CompruebaPunto (tipo_pong *p_pong) {
 void ExitPong (fsm_t* this) {
 	tipo_pong* p_pong;
 	p_pong = (tipo_pong*)(this->user_data);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &= (~FLAG_EXIT);
+	piUnlock(SYSTEM_FLAGS_KEY);
 
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &= (~FLAG_JUEGO_PONG);
@@ -367,7 +336,7 @@ void ActualizarJuegoPong (fsm_t* this) {
 	flags &= (~ FLAG_TIMER_JUEGO);
 	piUnlock (SYSTEM_FLAGS_KEY);
 
-	if(CompruebaReboteParedesVerticalesPong(*p_pong)) {
+	if(CompruebaReboteParedesVerticales(p_pong->pelota)) {
 		p_pong->pelota.trayectoria.xv = -p_pong->pelota.trayectoria.xv;
 	}
 
@@ -384,7 +353,7 @@ void ActualizarJuegoPong (fsm_t* this) {
 		}
 		return;
 	} 
-	else if (CompruebaRebotePalaPong (*p_pong)) {
+	else if (CompruebaRebotePala(p_pong->pelota, p_pong->pala)) {
 		switch(p_pong->pelota.x + p_pong->pelota.trayectoria.xv - p_pong->pala.x) {
 
 		case 0:
@@ -401,7 +370,7 @@ void ActualizarJuegoPong (fsm_t* this) {
 
 		}
 	} 
-	else if (CompruebaRebotePalaPong2 (*p_pong)) {
+	else if (CompruebaRebotePala(p_pong->pelota, p_pong->pala2)) {
 		switch(p_pong->pelota.x + p_pong->pelota.trayectoria.xv - p_pong->pala2.x) {
 
 		case 0:

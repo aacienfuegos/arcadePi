@@ -35,9 +35,6 @@ void ResetPong(tipo_pong *p_pong);
 //------------------------------------------------------
 // PROCEDIMIENTOS PARA LA GESTION DEL JUEGO
 //------------------------------------------------------
-int CompruebaReboteParedesVerticalesPong(tipo_pong pong);
-int CompruebaRebotePalaPong(tipo_pong pong);
-int CompruebaRebotePalaPong2(tipo_pong pong);
 int CompruebaPunto(tipo_pong *p_pong);
 
 //------------------------------------------------------

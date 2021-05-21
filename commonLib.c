@@ -134,6 +134,59 @@ void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla) {
 	}
 }
 
+int CompruebaReboteParedesVerticales (tipo_pelota pelota) {
+	// Comprobamos si la nueva posicion de la pelota excede los limites de la pantalla
+	if((pelota.x + pelota.trayectoria.xv >= NUM_COLUMNAS_DISPLAY) ||
+		(pelota.x + pelota.trayectoria.xv < 0) ) {
+		// La pelota rebota contra la pared derecha o izquierda
+		return 1;
+	}
+	return 0;
+}
+
+int CompruebaReboteTecho (tipo_pelota pelota) {
+	// Comprobamos si la nueva posicion de la pelota excede los limites de la pantalla
+	if(pelota.y + pelota.trayectoria.yv < 0) {
+		// La pelota rebota contra la pared derecha o izquierda
+		return 1;
+	}
+	return 0;
+}
+
+int CompruebaRebotePala (tipo_pelota pelota, tipo_pala pala) {
+		if ((pelota.x + pelota.trayectoria.xv >= pala.x ) &&
+			(pelota.x + pelota.trayectoria.xv < pala.x + NUM_COLUMNAS_PALA)) {
+			
+			
+			if(pelota.trayectoria.yv > 0) { 
+				if ((pelota.y + pelota.trayectoria.yv >= pala.y) &&
+					(pelota.y + pelota.trayectoria.yv < pala.y + NUM_FILAS_PALA)) {
+					return 1;
+				}
+			} else if(pelota.trayectoria.yv < 0) { 
+				if ((pelota.y + pelota.trayectoria.yv <= pala.y)
+					&& (pelota.y + pelota.trayectoria.yv > pala.y - NUM_FILAS_PALA)){
+					return 1;
+				}
+			}
+
+		}
+	return 0;
+}
+/* int CompruebaRebotePalaPong2 (tipo_pong pong) { */
+/* 	if(pong.pelota.trayectoria.yv < 0) { // Esta condicion solo tiene sentido si la pelota va hacia abajo en la pantalla */
+/* 		if ((pong.pelota.x + pong.pelota.trayectoria.xv >= pong.pala2.x ) && */
+/* 			(pong.pelota.x + pong.pelota.trayectoria.xv < pong.pala2.x + NUM_COLUMNAS_PALA)) { */
+/* 				if ((pong.pelota.y + pong.pelota.trayectoria.yv <= pong.pala2.y) */
+/* 					&& (pong.pelota.y + pong.pelota.trayectoria.yv > pong.pala2.y - NUM_FILAS_PALA)){ */
+/* 					return 1; */
+/* 				} */
+/* 		} */
+/* 	} */
+/* 	return 0; */
+/* } */
+
+
 void CambiarDireccionPelota(tipo_pelota *p_pelota, enum t_direccion direccion) {
 	if((direccion < 0)||(direccion > p_pelota->num_posibles_trayectorias)) {
 		printf("[ERROR!!!!][direccion NO VALIDA!!!!][%d]", direccion);
