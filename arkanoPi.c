@@ -243,6 +243,7 @@ int main () {
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuegoPong },
 		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuegoPong },
 
+		{ WAIT_START,  CompruebaExit, WAIT_INICIO, ExitPong },
 		{ WAIT_PAUSE,  CompruebaExit, WAIT_INICIO, ExitPong },
 		{ WAIT_END,  CompruebaExit, WAIT_INICIO, ExitPong },
 		{-1, NULL, -1, NULL },
