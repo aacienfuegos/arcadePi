@@ -256,7 +256,7 @@ void ContinuarJuego (fsm_t* this) {
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
-int CompruebaIniciaArkano(fsm_t* this) {
+int CompruebaInicioArkanoPi(fsm_t* this) {
 	int result = 0;
 
 	piLock(SYSTEM_FLAGS_KEY);

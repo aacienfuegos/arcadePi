@@ -210,7 +210,7 @@ int main () {
 	// Maquina de estados: lista de transiciones
 	// {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
 	fsm_trans_t arkanoPi[] = {
-		{ WAIT_INICIO, CompruebaIniciaArkano, WAIT_START, InicializaJuego },
+		{ WAIT_INICIO, CompruebaInicioArkanoPi, WAIT_START, InicializaJuego },
 		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, StartJuego },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
@@ -229,7 +229,7 @@ int main () {
 		{-1, NULL, -1, NULL },
 	};
 	fsm_trans_t pong[] = {
-		{ WAIT_INICIO, CompruebaIniciaPong, WAIT_START, InicializaJuegoPong },
+		{ WAIT_INICIO, CompruebaInicioPong, WAIT_START, InicializaJuegoPong },
 		{ WAIT_START, CompruebaBotonPulsado, WAIT_PUSH, StartJuegoPong },
 
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuegoPong },

@@ -46,7 +46,7 @@ void ActualizaPantallaScorePong(tipo_pong *p_pong);
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
-int CompruebaIniciaPong(fsm_t *this);
+int CompruebaInicioPong(fsm_t *this);
 int CompruebaMovimientoIzquierda2(fsm_t *this);
 int CompruebaMovimientoDerecha2(fsm_t *this);
 

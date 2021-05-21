@@ -7,11 +7,28 @@
 
 char score_total[15] ="0123ABCDHIJKLMN";
 
+void InicializaPong(tipo_pong *p_pong) {
+	ResetPong(p_pong);
+	ActualizaPantallaPong(p_pong);
+}
+
+void ResetPong(tipo_pong *p_pong) {
+	ReseteaPantalla((tipo_pantalla*)(p_pong->p_pantalla));
+	InicializaPelota((tipo_pelota*)(&(p_pong->pelota)));
+	InicializaPala((tipo_pala*)(&(p_pong->pala)));
+	InicializaPala2((tipo_pala*)(&(p_pong->pala2)));
+}
+
 void InicializaPala2(tipo_pala *p_pala) {
 	// Pala inicialmente en el centro de la pantalla
 	InicializaPala(p_pala);
 	p_pala->y = 0;
 }
+
+
+//------------------------------------------------------
+// PROCEDIMIENTOS PARA LA VISUALIZACION DEL JUEGO
+//------------------------------------------------------
 
 void ActualizaPantallaPong(tipo_pong* p_pong) {
     // Borro toda la pantalla
@@ -37,18 +54,6 @@ void ActualizaPantallaScorePong(tipo_pong* p_pong){
 	score[0] = p_pong->score1;
 	score[1] = p_pong->score2;
 	display_score(score, 2);
-}
-
-void InicializaPong(tipo_pong *p_pong) {
-	ResetPong(p_pong);
-	ActualizaPantallaPong(p_pong);
-}
-
-void ResetPong(tipo_pong *p_pong) {
-	ReseteaPantalla((tipo_pantalla*)(p_pong->p_pantalla));
-	InicializaPelota((tipo_pelota*)(&(p_pong->pelota)));
-	InicializaPala((tipo_pala*)(&(p_pong->pala)));
-	InicializaPala2((tipo_pala*)(&(p_pong->pala2)));
 }
 
 int CompruebaPunto (tipo_pong *p_pong) {
@@ -227,7 +232,7 @@ void ContinuarJuegoPong (fsm_t* this) {
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
 
-int CompruebaIniciaPong (fsm_t* this) {
+int CompruebaInicioPong (fsm_t* this) {
 	int result = 0;
 
 	piLock(SYSTEM_FLAGS_KEY);
