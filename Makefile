@@ -1,17 +1,14 @@
-CC = ./../tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
+CC = gcc
 CFLAGS = -g
 LDFLAGS = -lpthread -lrt -lwiringPi
-IFOLDER = -I ../include
-LFOLDER = -L ../lib
 OUTFILE = arcadepi-bin
 OBJS = arkanoPi.o controller.o commonLib.o arkanoPiLib.o pongLib.o fsm.o kbhit.o ledDisplay.o ledDisplayAux.o teclado_TL04.o tmr.o
 SRCS = arkanoPi.c controller.c commonLib.c arkanoPiLib.c pongLib.c fsm.c kbhit.c ledDisplay.c ledDisplayAux.c teclado_TL04.c tmr.c
 
 $(OUTFILE): $(OBJS)
-	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) -o $(OUTFILE) $(OBJS) $(LDFLAGS)
+	$(CC) -o $(OUTFILE) $(OBJS) $(LDFLAGS)
 $(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) -c $(SRCS) $(LDFLAGS)
-
+	$(CC) -c $(SRCS) $(LDFLAGS)
 
 clean:
 	rm -f $(OBJS) $(OUTFILE)

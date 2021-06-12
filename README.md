@@ -22,3 +22,27 @@
 ArcadePi is a game system developed for the Raspberry Pi.
 
 ![Image of the system](/docs/system.png)
+
+## System
+The system makes use of the following hardware:
+
+// ToDo
+
+## Executable compilation
+
+| :warning: _Before attempting to compile_ you must have the required [dependencies](#dependencies) installed |
+| :---                                                                                                        |
+
+The project makes use of the following libraries:
+
+- wiringPi
+- pthread
+- rt
+
+You can either use the [Makefile](Makefile) provided or compile it specifying the libraries used:
+
+```sh
+gcc src/*.c -lpthread -lrt -lwiringPi -o "arcadepi-bin"
+```
+
+For cross compilation from Eclipse you will need to install the Raspbian armhf toolchain.
