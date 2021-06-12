@@ -1,5 +1,5 @@
 *.o
 .vscode/*
-arkanopi
+arcadepi-bin
 
 pseudoWiringPi.*
