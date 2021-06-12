@@ -50,7 +50,7 @@ gcc src/*.c -lpthread -lrt -lwiringPi -o "arcadepi-bin"
 
 For cross compilation you will need to install the Raspbian armhf toolchain and compile it using either the [Makefile for cross-compilation](Makefile_cross):
 ```sh
-make -f Makefile_cross
+make cross
 ```
 
 Or use the following command:

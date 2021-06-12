@@ -13,6 +13,9 @@ $(OBJ): obj/%.o : src/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(LDFLAGS) -c $< -o $@
 
+cross:
+	make -f Makefile_cross
+
 clean:
 	rm -rf $(OBJ_DIR) $(OUTFILE)
 
