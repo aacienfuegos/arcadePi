@@ -2,16 +2,19 @@ CC = gcc
 CFLAGS = -g
 LDFLAGS = -lpthread -lrt -lwiringPi
 OUTFILE = arcadepi-bin
-OBJS = arkanoPi.o controller.o commonLib.o arkanoPiLib.o pongLib.o fsm.o kbhit.o ledDisplay.o ledDisplayAux.o teclado_TL04.o tmr.o
-SRCS = arkanoPi.c controller.c commonLib.c arkanoPiLib.c pongLib.c fsm.c kbhit.c ledDisplay.c ledDisplayAux.c teclado_TL04.c tmr.c
+SRC_DIR = src
+OBJ_DIR = obj
+SRC := $(wildcard $(SRC_DIR)/*.c)
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-$(OUTFILE): $(OBJS)
-	$(CC) -o $(OUTFILE) $(OBJS) $(LDFLAGS)
-$(OBJS): $(SRCS)
-	$(CC) -c $(SRCS) $(LDFLAGS)
+$(OUTFILE): $(OBJ)
+	$(CC) -o $@ $(OBJ) $(LDFLAGS)
+$(OBJ): obj/%.o : src/%.c
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(LDFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(OUTFILE)
+	rm -rf $(OBJ_DIR) $(OUTFILE)
 
 .PHONY : all
 all : $(OUTFILE)

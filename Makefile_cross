@@ -13,13 +13,11 @@ $(OUTFILE): $(OBJ)
 	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) $(LDFLAGS) -o $@ $(OBJ)
 
 $(OBJ): obj/%.o : src/%.c
+	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(IFOLDER) $(LFOLDER) $(LDFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
-
 clean:
-	rm -f $(OBJ) $(OUTFILE)
+	rm -rf $(OBJ_DIR) $(OUTFILE)
 
 .PHONY : all
 all : $(OUTFILE)
