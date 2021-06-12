@@ -1,4 +1,5 @@
 # ArcadePi
+
 <p>
 <a href="https://github.com/aacienfuegos/arcadePi/tree/main/docs">
 <img src="https://img.shields.io/badge/docs-.pdf-informational"/>
@@ -11,3 +12,13 @@
 <img src="https://img.shields.io/github/languages/top/aacienfuegos/arcadePi?logo=github">
 </a>
 </p>
+
+> Raspberry Pi game system
+> SDG2 project 2020-2021
+
+##### Authors: Cristina Conforto y Andrés Cienfuegos
+
+## Introduction
+ArcadePi is a game system developed for the Raspberry Pi.
+
+![Image of the system](/docs/system.png)
