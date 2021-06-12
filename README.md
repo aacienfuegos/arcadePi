@@ -20,8 +20,8 @@
 
 ## Introduction
 ArcadePi is a game system developed for the Raspberry Pi.
-
 ![Image of the system](/docs/system.png)
+You can check a video of the system in [SDG2 YouTube channel](https://www.youtube.com/watch?v=H7GAfVZnfUI)
 
 ## System
 The system makes use of the following hardware:
