@@ -22,7 +22,7 @@
 > Raspberry Pi game system
 > SDG2 project 2020-2021
 
-##### Authors: Cristina Conforto y Andrés Cienfuegos
+##### Authors: Cristina Conforto and Andrés Cienfuegos
 
 ## Introduction
 ArcadePi is a game system developed for the Raspberry Pi.
