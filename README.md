@@ -39,10 +39,45 @@ The project makes use of the following libraries:
 - pthread
 - rt
 
-You can either use the [Makefile](Makefile) provided or compile it specifying the libraries used:
-
+You can either use the [Makefile](Makefile) provided:
+```sh
+make
+```
+Or compile it specifying the libraries used:
 ```sh
 gcc src/*.c -lpthread -lrt -lwiringPi -o "arcadepi-bin"
 ```
 
-For cross compilation from Eclipse you will need to install the Raspbian armhf toolchain.
+For cross compilation you will need to install the Raspbian armhf toolchain and compile it using either the [Makefile for cross-compilation](Makefile_cross):
+```sh
+make -f Makefile_cross
+```
+
+Or use the following command:
+```sh
+arm-linux-gnueabihf-gcc -I ../include -L ../lib src/*.c -lpthread -lrt -lwiringPi -o "arcadepi-bin"
+```
+
+## Dependencies
+
+If working directly on the project's source code, you must take into account the following dependencies and libraries:
+
+### C Compiler
+
+The C compiler must compile for the arm32v7 architecture used by the BCM2836 IC. To accomplish this you need to install the following dependencies on Linux:
+
+```sh
+sudo apt-get install -y libc6-armel-cross libc6-dev-armel-cross binutils-arm-linux-gnueabi libncurses5-dev build-essential bison flex libssl-dev gcc-arm-linux-gnueabihf
+```
+
+### C Libraries
+
+To make use of the mentioned libraries in the project you must compile and install them beforehand. To dowload the various libraries you need have `git` installed.
+
+- wiringPi
+
+```sh
+git clone https://github.com/WiringPi/WiringPi
+cd WiringPi
+./build
+```
