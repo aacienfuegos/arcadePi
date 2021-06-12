@@ -1,6 +1,12 @@
 # ArcadePi
 
 <p>
+<img src="https://img.shields.io/badge/version-v3.0-success/"/>
+
+<a href="https://github.com/aacienfuegos/arcadePi/blob/main/LICENSE">
+<img src="https://img.shields.io/github/license/aacienfuegos/arcadePi"/>
+</a>
+
 <a href="https://github.com/aacienfuegos/arcadePi/tree/main/docs">
 <img src="https://img.shields.io/badge/docs-.pdf-informational"/>
 </a>
