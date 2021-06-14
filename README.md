@@ -33,7 +33,17 @@ You can check a video of the system in [SDG2 YouTube channel](https://www.youtub
 ## System
 The system makes use of the following hardware:
 
-// ToDo
+- Raspberry Pi (developed on 3B model)
+- Display
+	- 2 5x7 Dot Matrix Display (TA12-11SURKWA)
+	- 8x8 Dot Matrix MCU LED Display (MAX7219)
+- Control
+	- 4x4 membrane keypad
+- Other
+	- Tension regulator (LP2950-33LPE3)
+	- 3x8 decoder (HC238)
+	- 8 bit 3-State buffer (SN74HC244N)
+
 
 ## Executable compilation
 
